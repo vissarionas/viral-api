@@ -1,6 +1,8 @@
 var express = require('express');
-var cors = require('cors');
+var cors = require('cors');  
+var morgan = require('morgan'); 
 var passport = require('passport');
+var compression = require('compression');
 var FacebookTokenStrategy = require('passport-facebook-token');
 
 require('dotenv').config();
@@ -14,14 +16,17 @@ passport.use(new FacebookTokenStrategy({
     'id': profile.id,
     'token': accessToken
   };
-  return done(null, user);
+  return done(null, user, null);
 }));
 
 var app = express();
 
 app.use(require('body-parser').urlencoded({ extended: true }));
+app.use(morgan("common"));
+app.use(compression());
 app.use(cors({
-  credentials: true,
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 app.use(passport.initialize());
@@ -43,7 +48,7 @@ app.get('/auth/facebook/token',
         }
       } else {
         // res.set('Transfer-Encoding', 'chunked');
-        res.send(user);
+        res.status(200).send(user);
       }
   })(req, res);
 });
