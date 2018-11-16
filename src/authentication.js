@@ -1,5 +1,6 @@
 const passport = require('passport');
 const facebookTokenStrategy = require('passport-facebook-token');
+const database = require('./database');
 
 require('dotenv').config();
 
@@ -28,6 +29,7 @@ const authenticate = (req, res) => {
     } else {
       // res.set('Transfer-Encoding', 'chunked');
       res.status(200).send(user);
+      database.saveUser(user);
     }
   })(req, res);
 }
