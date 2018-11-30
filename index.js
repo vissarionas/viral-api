@@ -4,7 +4,6 @@ const morgan = require('morgan');
 const compression = require('compression');
 const passport = require('passport');
 const authentication = require('./src/authentication');
-const database = require('./src/database');
 
 const app = express();
 
@@ -19,15 +18,21 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get('/', (req, res) => {
-  res.send('HELLO WORLD!!');
+  res.json({
+    message: 'HELLO WORLD!!'
+  });
 });
 
-app.get('/auth/facebook/token', (req, res) => {
-  authentication.authenticate(req, res);
+app.post('/auth/facebook', (req, res) => {
+  authentication.facebookAuthenticate(req, res);
 });
 
-app.get('/users', (req, res) => {
-  database.getUsers(req, res);
+app.post('/auth/register', (req, res) => {
+  authentication.registerUser(req, res);
+});
+
+app.post('/auth/login', (req, res) => {
+  authentication.login(req, res);
 });
 
 app.listen(3000, () => console.log('Server started on http://127.0.0.1:3000'));

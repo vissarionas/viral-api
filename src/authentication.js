@@ -1,6 +1,9 @@
 const passport = require('passport');
 const facebookTokenStrategy = require('passport-facebook-token');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const database = require('./database');
+const config = require('../config');
 
 require('dotenv').config();
 
@@ -9,15 +12,44 @@ passport.use(new facebookTokenStrategy({
   clientSecret: process.env.FB_CLIENT_SECRET,
 }, (accessToken, refreshToken, profile, done) => {
   let user = {
-    'name': profile.name.givenName,
-    'id': profile.id,
-    'token': accessToken,
-    "refreshToken": refreshToken
+    'first_name': profile.name.givenName,
+    'last_name': profile.name.familyName,
+    'email': profile.emails[0],
+    'user_provider': profile.provider,
+    'facebook_id': profile.id,
+    'facebook_token': accessToken,
+    'password': ''
   };
   return done(null, user, null);
 }));
 
-const authenticate = (req, res) => {
+const signTokenToUser = (userId) => {
+  jwt.sign({userId: userId}, config.JWT_SECRET, (err, token) => {
+    database.saveAccessToken(userId, token);
+  });
+}
+
+const registerUser = (req, res, providerSpecific) => {
+  const user = {};
+
+  user.userName = req.body.email.split('@')[0];
+  user.email = req.body.email;
+  user.password = bcrypt.hashSync(req.body.password, 10);
+  user.active = true;
+
+  if (providerSpecific) {
+    user.providerUserId = providerSpecific.userId;
+    user.provider = providerSpecific.provider;
+  }
+  database.saveUser(user)
+    .then( data => {
+      // token signing goes here
+      console.log(data);
+      res.send(200);
+  })
+}
+
+const facebookAuthenticate = (req, res) => {
   passport.authenticate('facebook-token', (err, user, info) => {
     if (err) {
       if (err.oauthError) {
@@ -27,13 +59,13 @@ const authenticate = (req, res) => {
         res.send(err);
       }
     } else {
-      // res.set('Transfer-Encoding', 'chunked');
-      res.status(200).send(user);
-      database.saveUser(user);
+      res.status(200).send();
+      register(req, res, user);
     }
   })(req, res);
 }
 
 module.exports = {
-  authenticate: authenticate
-}
+  facebookAuthenticate,
+  registerUser
+};
