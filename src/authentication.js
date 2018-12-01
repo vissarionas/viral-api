@@ -3,13 +3,11 @@ const facebookTokenStrategy = require('passport-facebook-token');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const database = require('./database');
-const config = require('../config');
-
-require('dotenv').config();
+const config = require('config');
 
 passport.use(new facebookTokenStrategy({
-  clientID: process.env.FB_CLIENT_ID,
-  clientSecret: process.env.FB_CLIENT_SECRET,
+  clientID: config.get('App.facebook.FB_CLIENT_ID'),
+  clientSecret: config.get('App.facebook.FB_CLIENT_SECRET'),
 }, (accessToken, refreshToken, profile, done) => {
   let user = {
     'first_name': profile.name.givenName,
@@ -24,7 +22,7 @@ passport.use(new facebookTokenStrategy({
 }));
 
 const signTokenToUser = (userId) => {
-  jwt.sign({userId: userId}, config.JWT_SECRET, (err, token) => {
+  jwt.sign({userId: userId}, config.get('App.jwt.JWT_SECRET'), (err, token) => {
     database.saveAccessToken(userId, token);
   });
 }
