@@ -18,8 +18,8 @@
   },
   "couch": {
     "dbConfig": {
-      "host": "some_url_hosting_couchdb",
-      "protocol": "https",
+      "host": "localhost",
+      "protocol": "http",
       "port": 5984
     },
     "databases": {
