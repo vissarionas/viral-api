@@ -6,8 +6,8 @@ const database = require('./database');
 const config = require('config');
 
 passport.use(new facebookTokenStrategy({
-  clientID: config.get('App.facebook.FB_CLIENT_ID'),
-  clientSecret: config.get('App.facebook.FB_CLIENT_SECRET'),
+  clientID: config.get('App.facebookDevCredentials.FB_CLIENT_ID'),
+  clientSecret: config.get('App.facebookDevCredentials.FB_CLIENT_SECRET'),
 }, (accessToken, refreshToken, profile, done) => {
   let user = {
     'first_name': profile.name.givenName,

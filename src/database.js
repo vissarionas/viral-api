@@ -1,9 +1,11 @@
+require('dotenv').config();
 const NodeCouchDb = require('node-couchdb');
 const config = require('config');
 
-require('dotenv').config();
-
 const couch = new NodeCouchDb({
+  host: config.get('couch.dbConfig.host'),
+  protocol: config.get('couch.dbConfig.protocol'),
+  port: config.get('couch.dbConfig.port'),
   auth: {
     user: process.env.DB_USERNAME,
     pass: process.env.DB_PASSWORD
@@ -19,7 +21,7 @@ const saveUser = (user) => {
     couch.get(dbName, viewUrl, {key: user.email})
     .then(({data, headers, status}) => {
       if (!data.rows.length) {
-        couch.insert("users", {
+        couch.insert(dbName, {
           _id: Date.now().toString(),
           userName: user.userName,
           email: user.email,
@@ -31,14 +33,12 @@ const saveUser = (user) => {
             resolve(data);
           }, err => {
             reject(err);
-            console.log(err);
         });
       } else {
         reject(`Email ${user.email} already exists`);
       }
     }, err => {
       reject(err);
-      console.log(err);
     });
   });
 };
