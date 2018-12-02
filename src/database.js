@@ -12,16 +12,17 @@ const couch = new NodeCouchDb({
   },
 });
 
-const saveUser = (user) => {
-  const dbName = config.get('couch.databases.users');
-  const viewUrl = config.get('couch.views.usersByEmail');
-  
-  return new Promise(function (resolve, reject) {
+const usersDb = config.get('couch.databases.users');
+const usersByEmailView = config.get('couch.views.allUsersByEmail');
+const tokensDb = config.get('couch.databases.tokens');
+const tokensView = config.get('couch.views.allTokens');
 
-    couch.get(dbName, viewUrl, {key: user.email})
+const saveUser = (user) => {  
+  return new Promise(function (resolve, reject) {
+    couch.get(usersDb, usersByEmailView, {key: user.email})
     .then(({data, headers, status}) => {
       if (!data.rows.length) {
-        couch.insert(dbName, {
+        couch.insert(usersDb, {
           _id: Date.now().toString(),
           userName: user.userName,
           email: user.email,
@@ -43,6 +44,17 @@ const saveUser = (user) => {
   });
 };
 
+const saveToken = (urerId, token) => {
+  couch.insert(tokensDb, {
+    _id: urerId,
+    token: token,
+    createdAt: Date.now().toString()
+  }).then(({data, headers, status}) => {
+    console.log(data);
+  });
+};
+
 module.exports = {
-  saveUser
+  saveUser,
+  saveToken
 }

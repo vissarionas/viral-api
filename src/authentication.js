@@ -21,9 +21,9 @@ passport.use(new facebookTokenStrategy({
   return done(null, user, null);
 }));
 
-const signTokenToUser = (userId) => {
+const createAndSaveToken = (userId) => {
   jwt.sign({userId: userId}, config.get('App.jwt.JWT_SECRET'), (err, token) => {
-    database.saveAccessToken(userId, token);
+    database.saveToken(userId, token);
   });
 }
 
@@ -41,7 +41,7 @@ const registerUser = (req, res, providerSpecific) => {
   }
   database.saveUser(user)
     .then( data => {
-      // token signing goes here
+      createAndSaveToken(data.id);
       res.status(200).send(data);
   }, err => {
       res.send(err);
