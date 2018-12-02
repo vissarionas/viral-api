@@ -15,5 +15,14 @@
       "FB_CLIENT_ID": "543664692723936",
       "FB_CLIENT_SECRET": "2938af1d6607fcde320a62210612ff5b"
     }
+  },
+  "couch": {
+    "databases": {
+      "users": "users",
+      "tokens": "tokens"
+    },
+    "views": {
+      "usersByEmail": "_design/allUsers/_view/by-email"
+    }
   }
 }
