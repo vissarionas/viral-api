@@ -42,9 +42,10 @@ const registerUser = (req, res, providerSpecific) => {
   database.saveUser(user)
     .then( data => {
       // token signing goes here
-      console.log(data);
-      res.send(200);
-  })
+      res.status(200).send(data);
+  }, err => {
+      res.send(err);
+  });
 }
 
 const facebookAuthenticate = (req, res) => {
