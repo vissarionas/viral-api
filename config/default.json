@@ -9,7 +9,7 @@
       "facebookAuthentication": "/auth/facebook"
     },
     "jwt": {
-      "JWT_SECRET": "This is the secret"
+      "JWT_SECRET": "This is the jwt secret"
     },
     "facebookDevCredentials": {
       "FB_CLIENT_ID": "543664692723936",
@@ -27,7 +27,8 @@
       "tokens": "tokens"
     },
     "views": {
-      "usersByEmail": "_design/allUsers/_view/by-email"
+      "allUsersByEmail": "_design/allUsers/_view/by-email",
+      "allTokens": "_design/allTokens/_view/by-token"
     }
   }
 }
