@@ -28,8 +28,8 @@
       "tokens": "tokens"
     },
     "views": {
-      "allUsersByEmail": "_design/allUsers/_view/by-email",
-      "allTokens": "_design/allTokens/_view/by-token"
+      "usersByEmail": "_design/allUsers/_view/by-email",
+      "usersByProviderId": "_design/allUsers/_view/by-provider-id"
     }
   }
 }

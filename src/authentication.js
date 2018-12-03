@@ -20,21 +20,29 @@ const createAndSaveToken = (userId) => {
 
 const registerUser = (req, res, profile) => {
   const user = {};
-  if (profile) {
-    user.userName = profile.name.givenName + profile.name.familyName;
-    user.email = profile.emails[0].value;
-    user.provider = profile.provider;
-    user.providerUserId = profile.id;
-    user.active = true;
-  } else {
-    user.userName = req.body.email.split('@')[0];
-    user.email = req.body.email;
-    user.password = bcrypt.hashSync(req.body.password, 10);
-    user.active = true;
-  }
-
+  user.userName = req.body.email.split('@')[0];
+  user.email = req.body.email;
+  user.password = bcrypt.hashSync(req.body.password, 10);
+  user.active = true;
 
   database.saveUser(user)
+    .then( data => {
+      createAndSaveToken(data.id);
+      res.status(200).send(data);
+  }, err => {
+      res.send(err);
+  });
+}
+
+const registerFacebookUser = (req, res, profile) => {
+  const user = {};
+  user.userName = profile.name.givenName + profile.name.familyName;
+  user.email = profile.emails[0].value;
+  user.provider = profile.provider;
+  user.providerUserId = profile.id;
+  user.active = true;
+
+  database.saveFacebookUser(user)
     .then( data => {
       createAndSaveToken(data.id);
       res.status(200).send(data);
@@ -53,8 +61,7 @@ const facebookAuthenticate = (req, res) => {
         res.send(err);
       }
     } else {
-      registerUser(req, res, profile);
-      // res.status(200).send();
+      registerFacebookUser(req, res, profile);
     }
   })(req, res);
 }
