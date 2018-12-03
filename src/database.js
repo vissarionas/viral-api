@@ -13,11 +13,11 @@ const couch = new NodeCouchDb({
 });
 
 const usersDb = config.get('couch.databases.users');
-const usersByEmailView = config.get('couch.views.allUsersByEmail');
+const usersByEmailView = config.get('couch.views.usersByEmail');
+const userByProviderId = config.get('couch.views.usersByProviderId');
 const tokensDb = config.get('couch.databases.tokens');
-const tokensView = config.get('couch.views.allTokens');
 
-const saveUser = (user) => {  
+const saveUser = (user) => {
   return new Promise(function (resolve, reject) {
     couch.get(usersDb, usersByEmailView, {key: user.email})
     .then(({data, headers, status}) => {
@@ -27,6 +27,30 @@ const saveUser = (user) => {
           userName: user.userName,
           email: user.email,
           password: user.password,
+          active: user.active
+          }).then(({data, headers, status}) => {
+            resolve(data);
+          }, err => {
+            reject(err);
+        });
+      } else {
+        reject(`Email ${user.email} already exists`);
+      }
+    }, err => {
+      reject(err);
+    });
+  });
+};
+
+const saveFacebookUser = (user) => {
+  return new Promise(function (resolve, reject) {
+    couch.get(usersDb, userByProviderId, {key: user.providerUserId})
+    .then(({data, headers, status}) => {
+      if (!data.rows.length) {
+        couch.insert(usersDb, {
+          _id: Date.now().toString(),
+          userName: user.userName,
+          email: user.email,
           active: user.active,
           provider: user.provider,
           providerUserId: user.providerUserId
@@ -36,7 +60,7 @@ const saveUser = (user) => {
             reject(err);
         });
       } else {
-        reject(`Email ${user.email} already exists`);
+        reject(`Facebook user id ${user.providerUserId} already exists`);
       }
     }, err => {
       reject(err);
@@ -55,5 +79,6 @@ const saveToken = (urerId, token) => {
 
 module.exports = {
   saveUser,
+  saveFacebookUser,
   saveToken
 }
