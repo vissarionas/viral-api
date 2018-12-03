@@ -9,16 +9,7 @@ passport.use(new facebookTokenStrategy({
   clientID: config.get('App.facebookDevCredentials.FB_CLIENT_ID'),
   clientSecret: config.get('App.facebookDevCredentials.FB_CLIENT_SECRET'),
 }, (accessToken, refreshToken, profile, done) => {
-  let user = {
-    'first_name': profile.name.givenName,
-    'last_name': profile.name.familyName,
-    'email': profile.emails[0],
-    'user_provider': profile.provider,
-    'facebook_id': profile.id,
-    'facebook_token': accessToken,
-    'password': ''
-  };
-  return done(null, user, null);
+  return done(null, profile, null);
 }));
 
 const createAndSaveToken = (userId) => {
@@ -27,18 +18,22 @@ const createAndSaveToken = (userId) => {
   });
 }
 
-const registerUser = (req, res, providerSpecific) => {
+const registerUser = (req, res, profile) => {
   const user = {};
-
-  user.userName = req.body.email.split('@')[0];
-  user.email = req.body.email;
-  user.password = bcrypt.hashSync(req.body.password, 10);
-  user.active = true;
-
-  if (providerSpecific) {
-    user.providerUserId = providerSpecific.userId;
-    user.provider = providerSpecific.provider;
+  if (profile) {
+    user.userName = profile.name.givenName + profile.name.familyName;
+    user.email = profile.emails[0].value;
+    user.provider = profile.provider;
+    user.providerUserId = profile.id;
+    user.active = true;
+  } else {
+    user.userName = req.body.email.split('@')[0];
+    user.email = req.body.email;
+    user.password = bcrypt.hashSync(req.body.password, 10);
+    user.active = true;
   }
+
+
   database.saveUser(user)
     .then( data => {
       createAndSaveToken(data.id);
@@ -49,7 +44,7 @@ const registerUser = (req, res, providerSpecific) => {
 }
 
 const facebookAuthenticate = (req, res) => {
-  passport.authenticate('facebook-token', (err, user, info) => {
+  passport.authenticate('facebook-token', (err, profile, info) => {
     if (err) {
       if (err.oauthError) {
         let oauthError = JSON.parse(err.oauthError.data);
@@ -58,8 +53,8 @@ const facebookAuthenticate = (req, res) => {
         res.send(err);
       }
     } else {
-      res.status(200).send();
-      register(req, res, user);
+      registerUser(req, res, profile);
+      // res.status(200).send();
     }
   })(req, res);
 }
