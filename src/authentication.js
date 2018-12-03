@@ -12,9 +12,12 @@ passport.use(new facebookTokenStrategy({
   return done(null, profile, null);
 }));
 
-const createAndSaveToken = (userId) => {
+const createAndSaveToken = (req, res, userId) => {
   jwt.sign({userId: userId}, config.get('App.jwt.JWT_SECRET'), {expiresIn: config.get('App.jwt.EXPIRATION')}, (err, token) => {
-    database.saveToken(userId, token);
+    database.saveToken(userId, token)
+    .then((token) => {
+      res.status(200).send(token);
+    })
   });
 }
 
@@ -27,8 +30,7 @@ const registerUser = (req, res, profile) => {
 
   database.saveUser(user)
     .then( data => {
-      createAndSaveToken(data.id);
-      res.status(200).send(data);
+      createAndSaveToken(req, res, data.id);
   }, err => {
       res.send(err);
   });
@@ -44,8 +46,7 @@ const registerFacebookUser = (req, res, profile) => {
 
   database.saveFacebookUser(user)
     .then( data => {
-      createAndSaveToken(data.id);
-      res.status(200).send(data);
+      createAndSaveToken(req, res, data.id);
   }, err => {
       res.send(err);
   });

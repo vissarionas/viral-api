@@ -69,11 +69,15 @@ const saveFacebookUser = (user) => {
 };
 
 const saveToken = (urerId, token) => {
-  couch.insert(tokensDb, {
-    _id: urerId,
-    token: token
-  }).then(({data, headers, status}) => {
-    console.log(data);
+  return new Promise(function (resolve, reject) {
+    couch.insert(tokensDb, {
+      _id: urerId,
+      token: token
+    }).then(({data, headers, status}) => {
+      resolve(token);
+    }, err => {
+      reject(err);
+    });
   });
 };
 
