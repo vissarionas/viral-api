@@ -47,8 +47,7 @@ const saveUser = (user) => {
 const saveToken = (urerId, token) => {
   couch.insert(tokensDb, {
     _id: urerId,
-    token: token,
-    createdAt: Date.now().toString()
+    token: token
   }).then(({data, headers, status}) => {
     console.log(data);
   });
