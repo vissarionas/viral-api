@@ -22,7 +22,7 @@ passport.use(new facebookTokenStrategy({
 }));
 
 const createAndSaveToken = (userId) => {
-  jwt.sign({userId: userId}, config.get('App.jwt.JWT_SECRET'), (err, token) => {
+  jwt.sign({userId: userId}, config.get('App.jwt.JWT_SECRET'), {expiresIn: config.get('App.jwt.EXPIRATION')}, (err, token) => {
     database.saveToken(userId, token);
   });
 }

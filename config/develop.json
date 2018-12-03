@@ -9,7 +9,8 @@
       "facebookAuthentication": "/auth/facebook"
     },
     "jwt": {
-      "JWT_SECRET": "This is the secret"
+      "JWT_SECRET": "This is the secret",
+      "EXPIRATION": "10 days"
     },
     "facebookDevCredentials": {
       "FB_CLIENT_ID": "543664692723936",
