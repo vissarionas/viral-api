@@ -27,7 +27,7 @@ app.post(config.get('App.endpoints.login'), (req, res) => {
 });
 
 app.post(config.get('App.endpoints.register'), (req, res) => {
-  authentication.registerUser(req, res);
+  authentication.registerEmailUser(req, res);
 });
 
 app.post(config.get('App.endpoints.facebookAuthentication'), (req, res) => {

@@ -29,7 +29,7 @@
     },
     "views": {
       "usersByEmail": "_design/allUsers/_view/by-email",
-      "usersByProviderId": "_design/allUsers/_view/by-provider-id"
+      "usersByFacebookId": "_design/allUsers/_view/by-facebook-id"
     }
   }
 }
