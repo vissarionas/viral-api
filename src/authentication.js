@@ -47,7 +47,7 @@ const registerEmailUser = (req, res) => {
       user.password = bcrypt.hashSync(req.body.password, 10);
       user.active = true;
     
-      database.saveUser(user)
+      database.saveEmailUser(user)
         .then( data => {
           createAndSaveToken(req, res, data.id);
       }, err => {
@@ -86,12 +86,29 @@ const registerFacebookUser = (req, res, profile) => {
   });
 }
 
-const login = (req, res) => {
-  
+const loginWithEmail = (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  database.getUserByEmail(email)
+  .then(data => {
+    if (data) {
+      bcrypt.compare(password, data.value, (error, response) => {
+        database.getTokenById(data.id)
+        .then(data => {
+          database.deleteTokenById(data._id, data._rev)
+          .then(data => {
+            res.status(200).send(data);
+          });
+        }, err => {
+          res.status(404).send(err);
+        });
+      });
+    }
+  });
 }
 
 module.exports = {
   facebookAuthenticate,
   registerEmailUser,
-  login
+  loginWithEmail
 };

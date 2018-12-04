@@ -22,8 +22,8 @@ app.get('/', (req, res) => {
   res.send(200);
 });
 
-app.post(config.get('App.endpoints.login'), (req, res) => {
-  authentication.login(req, res);
+app.post(config.get('App.endpoints.emailLogin'), (req, res) => {
+  authentication.loginWithEmail(req, res);
 });
 
 app.post(config.get('App.endpoints.register'), (req, res) => {
