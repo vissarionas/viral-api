@@ -17,7 +17,7 @@ const usersByEmailView = config.get('couch.views.usersByEmail');
 const userByFacebookId = config.get('couch.views.usersByFacebookId');
 const tokensDb = config.get('couch.databases.tokens');
 
-const saveUser = (user) => {
+const saveEmailUser = (user) => {
   return new Promise(function (resolve, reject) {
     couch.insert(usersDb, {
       _id: Date.now().toString(),
@@ -50,6 +50,28 @@ const saveFacebookUser = (user) => {
   });
 };
 
+const getUserByEmail = (email) => {
+  return new Promise(function (resolve, reject) {
+    couch.get(usersDb, usersByEmailView, {key: email})
+    .then(({data, headers, status}) => {
+      resolve(data.rows[0]);
+    }, err => {
+      reject(err);
+    })
+  });
+}
+
+const getUserByFacebookId = (facebookId) => {
+  return new Promise(function (resolve, reject) {
+    couch.get(usersDb, userByFacebookId, {key: facebookId})
+    .then(({data, headers, status}) => {
+      resolve(data.rows[0]);
+    }, err => {
+      reject(err);
+    })
+  });
+}
+
 const saveToken = (urerId, token) => {
   return new Promise(function (resolve, reject) {
     couch.insert(tokensDb, {
@@ -63,32 +85,32 @@ const saveToken = (urerId, token) => {
   });
 };
 
-const getUserByEmail = (email) => {
+const getTokenById = (userId) => {
   return new Promise(function (resolve, reject) {
-    couch.get(usersDb, usersByEmailView, {key: email})
-      .then(({data, headers, status}) => {
-        resolve(data.rows[0]);
-      }, err => {
-        reject(err);
-      })
+    couch.get(tokensDb, userId)
+    .then(({data, headers, status}) => {
+      resolve(data);
+    }, err => {
+      reject(err);
+    });
   });
-}
+};
 
-const getUserByFacebookId = (facebookId) => {
+const deleteTokenById = (tokenId, rev) => {
   return new Promise(function (resolve, reject) {
-    couch.get(usersDb, userByFacebookId, {key: facebookId})
-      .then(({data, headers, status}) => {
-        resolve(data.rows[0]);
-      }, err => {
-        reject(err);
-      })
+    couch.del(tokensDb, tokenId, rev)
+    .then(({data, headers, status}) => {
+      resolve(data);
+    });
   });
 }
 
 module.exports = {
-  saveUser,
+  saveEmailUser,
   saveFacebookUser,
   saveToken,
+  getTokenById,
   getUserByEmail,
-  getUserByFacebookId
+  getUserByFacebookId,
+  deleteTokenById
 }
