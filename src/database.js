@@ -14,56 +14,38 @@ const couch = new NodeCouchDb({
 
 const usersDb = config.get('couch.databases.users');
 const usersByEmailView = config.get('couch.views.usersByEmail');
-const userByProviderId = config.get('couch.views.usersByProviderId');
+const userByFacebookId = config.get('couch.views.usersByFacebookId');
 const tokensDb = config.get('couch.databases.tokens');
 
 const saveUser = (user) => {
   return new Promise(function (resolve, reject) {
-    couch.get(usersDb, usersByEmailView, {key: user.email})
-    .then(({data, headers, status}) => {
-      if (!data.rows.length) {
-        couch.insert(usersDb, {
-          _id: Date.now().toString(),
-          userName: user.userName,
-          email: user.email,
-          password: user.password,
-          active: user.active
-          }).then(({data, headers, status}) => {
-            resolve(data);
-          }, err => {
-            reject(err);
-        });
-      } else {
-        reject(`Email ${user.email} already exists`);
-      }
-    }, err => {
-      reject(err);
+    couch.insert(usersDb, {
+      _id: Date.now().toString(),
+      userName: user.userName,
+      email: user.email,
+      password: user.password,
+      active: user.active
+      }).then(({data, headers, status}) => {
+        resolve(data);
+      }, err => {
+        reject(err);
     });
   });
 };
 
 const saveFacebookUser = (user) => {
   return new Promise(function (resolve, reject) {
-    couch.get(usersDb, userByProviderId, {key: user.providerUserId})
-    .then(({data, headers, status}) => {
-      if (!data.rows.length) {
-        couch.insert(usersDb, {
-          _id: Date.now().toString(),
-          userName: user.userName,
-          email: user.email,
-          active: user.active,
-          provider: user.provider,
-          providerUserId: user.providerUserId
-          }).then(({data, headers, status}) => {
-            resolve(data);
-          }, err => {
-            reject(err);
-        });
-      } else {
-        reject(`Facebook user id ${user.providerUserId} already exists`);
-      }
-    }, err => {
-      reject(err);
+    couch.insert(usersDb, {
+      _id: Date.now().toString(),
+      userName: user.userName,
+      email: user.email,
+      active: user.active,
+      provider: user.provider,
+      facebookId: user.facebookId
+      }).then(({data, headers, status}) => {
+        resolve(data);
+      }, err => {
+        reject(err);
     });
   });
 };
@@ -81,8 +63,32 @@ const saveToken = (urerId, token) => {
   });
 };
 
+const getUserByEmail = (email) => {
+  return new Promise(function (resolve, reject) {
+    couch.get(usersDb, usersByEmailView, {key: email})
+      .then(({data, headers, status}) => {
+        resolve(data.rows[0]);
+      }, err => {
+        reject(err);
+      })
+  });
+}
+
+const getUserByFacebookId = (facebookId) => {
+  return new Promise(function (resolve, reject) {
+    couch.get(usersDb, userByFacebookId, {key: facebookId})
+      .then(({data, headers, status}) => {
+        resolve(data.rows[0]);
+      }, err => {
+        reject(err);
+      })
+  });
+}
+
 module.exports = {
   saveUser,
   saveFacebookUser,
-  saveToken
+  saveToken,
+  getUserByEmail,
+  getUserByFacebookId
 }
