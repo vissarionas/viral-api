@@ -5,8 +5,8 @@
     },
     "endpoints": {
       "emailLogin": "/login",
-      "register": "/register",
-      "facebookAuthentication": "/auth/facebook"
+      "registerEmail": "/register/email",
+      "registerFacebook": "/register/facebook"
     },
     "jwt": {
       "JWT_SECRET": "This is the jwt secret",

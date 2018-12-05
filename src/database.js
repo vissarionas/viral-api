@@ -15,7 +15,6 @@ const couch = new NodeCouchDb({
 const usersDb = config.get('couch.databases.users');
 const usersByEmailView = config.get('couch.views.usersByEmail');
 const userByFacebookId = config.get('couch.views.usersByFacebookId');
-const tokensDb = config.get('couch.databases.tokens');
 
 const saveEmailUser = (user) => {
   return new Promise(function (resolve, reject) {
@@ -72,45 +71,9 @@ const getUserByFacebookId = (facebookId) => {
   });
 }
 
-const saveToken = (urerId, token) => {
-  return new Promise(function (resolve, reject) {
-    couch.insert(tokensDb, {
-      _id: urerId,
-      token: token
-    }).then(({data, headers, status}) => {
-      resolve(token);
-    }, err => {
-      reject(err);
-    });
-  });
-};
-
-const getTokenById = (userId) => {
-  return new Promise(function (resolve, reject) {
-    couch.get(tokensDb, userId)
-    .then(({data, headers, status}) => {
-      resolve(data);
-    }, err => {
-      reject(err);
-    });
-  });
-};
-
-const deleteTokenById = (tokenId, rev) => {
-  return new Promise(function (resolve, reject) {
-    couch.del(tokensDb, tokenId, rev)
-    .then(({data, headers, status}) => {
-      resolve(data);
-    });
-  });
-}
-
 module.exports = {
-  saveEmailUser,
-  saveFacebookUser,
-  saveToken,
-  getTokenById,
   getUserByEmail,
+  saveEmailUser,
   getUserByFacebookId,
-  deleteTokenById
+  saveFacebookUser
 }
