@@ -5,8 +5,17 @@ const compression = require('compression');
 const passport = require('passport');
 const authentication = require('./src/authentication');
 const config = require('config');
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
 
 const app = express();
+
+passport.use(new JwtStrategy({
+  jwtFromRequest:ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: config.get('App.jwt.JWT_SECRET')
+}, (jwt_payload, done) => {
+  return done(null, jwt_payload.userId);
+}));
 
 app.use(require('body-parser').urlencoded({ extended: true }));
 app.use(morgan("common"));
@@ -18,8 +27,8 @@ app.use(cors({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get('/', (req, res) => {
-  res.send(200);
+app.get('/', passport.authenticate('jwt', { session: false }), (req, res) => {
+  res.status(200).send(req.user);
 });
 
 app.post(config.get('App.endpoints.emailLogin'), (req, res) => {
