@@ -26,11 +26,11 @@ app.post(config.get('App.endpoints.emailLogin'), (req, res) => {
   authentication.loginWithEmail(req, res);
 });
 
-app.post(config.get('App.endpoints.register'), (req, res) => {
+app.post(config.get('App.endpoints.registerEmail'), (req, res) => {
   authentication.registerEmailUser(req, res);
 });
 
-app.post(config.get('App.endpoints.facebookAuthentication'), (req, res) => {
+app.post(config.get('App.endpoints.registerFacebook'), (req, res) => {
   authentication.facebookAuthenticate(req, res);
 });
 

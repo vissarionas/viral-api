@@ -27,12 +27,12 @@ const facebookAuthenticate = (req, res) => {
   })(req, res);
 }
 
-const createAndSaveToken = (req, res, userId) => {
-  jwt.sign({userId: userId}, config.get('App.jwt.JWT_SECRET'), {expiresIn: config.get('App.jwt.EXPIRATION')}, (err, token) => {
-    database.saveToken(userId, token)
-    .then((token) => {
-      res.status(200).send(token);
-    })
+const signAndSendToken = (req, res, userId) => {
+  jwt.sign( {userId: userId}, config.get('App.jwt.JWT_SECRET'), {expiresIn: config.get('App.jwt.EXPIRATION')}, (err, token) => {
+    // Move this elsewhere
+    jwt.verify(token, config.get('App.jwt.JWT_SECRET'), (err, decoded) => {
+      res.status(200).send(decoded ? decoded.userId : err.message);
+    });
   });
 }
 
@@ -49,7 +49,7 @@ const registerEmailUser = (req, res) => {
     
       database.saveEmailUser(user)
         .then( data => {
-          createAndSaveToken(req, res, data.id);
+          signAndSendToken(req, res, data.id);
       }, err => {
           res.send(err);
       });
@@ -74,7 +74,7 @@ const registerFacebookUser = (req, res, profile) => {
     
       database.saveFacebookUser(user)
         .then( data => {
-          createAndSaveToken(req, res, data.id);
+          signAndSendToken(req, res, data.id);
       }, err => {
           res.send(err);
       });
@@ -93,15 +93,7 @@ const loginWithEmail = (req, res) => {
   .then(data => {
     if (data) {
       bcrypt.compare(password, data.value, (error, response) => {
-        database.getTokenById(data.id)
-        .then(data => {
-          database.deleteTokenById(data._id, data._rev)
-          .then(data => {
-            res.status(200).send(data);
-          });
-        }, err => {
-          res.status(404).send(err);
-        });
+        res.status(200).send(response ? 'passwords match': 'wrong password');
       });
     }
   });
