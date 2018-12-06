@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const compression = require('compression');
 const passport = require('passport');
 const authentication = require('./src/authentication');
+const register = require('./src/register');
 const config = require('config');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
@@ -27,19 +28,24 @@ app.use(cors({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get('/', passport.authenticate('jwt', { session: false }), (req, res) => {
-  res.status(200).send(req.user);
+app.get('/', (req, res) => {
+  res.status(200).send({message: "Root path"});
+});
+
+app.get(config.get('App.endpoints.user'), passport.authenticate('jwt', { session: false }), (req, res) => {
+  res.status(200).send({Token_payload_user: req.user});
+  // Check if user exists
 });
 
 app.post(config.get('App.endpoints.emailLogin'), (req, res) => {
   authentication.loginWithEmail(req, res);
 });
 
-app.post(config.get('App.endpoints.registerEmail'), (req, res) => {
-  authentication.registerEmailUser(req, res);
+app.post(config.get('App.endpoints.register'), (req, res) => {
+  register.registerEmailUser(req, res);
 });
 
-app.post(config.get('App.endpoints.registerFacebook'), (req, res) => {
+app.post(config.get('App.endpoints.facebookAuthenticate'), (req, res) => {
   authentication.facebookAuthenticate(req, res);
 });
 

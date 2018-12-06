@@ -1,8 +1,7 @@
 const passport = require('passport');
 const facebookTokenStrategy = require('passport-facebook-token');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 const database = require('./database');
+const register = require('./register');
 const config = require('config');
 
 passport.use(new facebookTokenStrategy({
@@ -22,11 +21,16 @@ const facebookAuthenticate = (req, res) => {
         res.send(err);
       }
     } else {
-      // Do something with facebook profile after authenticated
-      res.send(profile);
-    }
+      database.getUserByFacebookId(profile.id)
+      .then(user => {
+          register.signAndSendToken(req, res, user.id);
+        }, (err) => {
+          register.registerFacebookUser(req, res, profile);
+        }
+      );
+    };
   })(req, res);
-}
+};
 
 module.exports = {
   facebookAuthenticate,
