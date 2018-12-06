@@ -49,29 +49,53 @@ const saveFacebookUser = (user) => {
   });
 };
 
+const getUserById = (userId) => {
+  return new Promise(function (resolve, reject) {
+    couch.get(usersDb, userId)
+    .then(({data, headers, status}) => {
+      if (data.rows[0]) {
+        resolve(data.rows[0]);
+      } else {
+        reject();
+      }
+    }, err => {
+      reject(err);
+    });
+  });
+};
+
 const getUserByEmail = (email) => {
   return new Promise(function (resolve, reject) {
     couch.get(usersDb, usersByEmailView, {key: email})
     .then(({data, headers, status}) => {
-      resolve(data.rows[0]);
+      if (data.rows[0]) {
+        resolve(data.rows[0]);
+      } else {
+        reject();
+      };
     }, err => {
       reject(err);
-    })
+    });
   });
-}
+};
 
 const getUserByFacebookId = (facebookId) => {
   return new Promise(function (resolve, reject) {
     couch.get(usersDb, userByFacebookId, {key: facebookId})
     .then(({data, headers, status}) => {
-      resolve(data.rows[0]);
+      if (data.rows[0]) {
+        resolve(data.rows[0]);
+      } else {
+        reject();
+      }
     }, err => {
       reject(err);
     })
   });
-}
+};
 
 module.exports = {
+  getUserById,
   getUserByEmail,
   saveEmailUser,
   getUserByFacebookId,

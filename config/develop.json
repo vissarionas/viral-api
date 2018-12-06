@@ -5,12 +5,13 @@
     },
     "endpoints": {
       "emailLogin": "/login",
-      "registerEmail": "/register/email",
-      "registerFacebook": "/register/facebook"
+      "register": "/register",
+      "facebookAuthenticate": "/auth/facebook",
+      "user": "/user"
     },
     "jwt": {
       "JWT_SECRET": "This is the secret",
-      "EXPIRATION": "10 days"
+      "EXPIRATION": "30 days"
     },
     "facebookDevCredentials": {
       "FB_CLIENT_ID": "543664692723936",
