@@ -25,12 +25,13 @@ const registerEmailUser = (req, res) => {
 };
 
 const registerFacebookUser = (req, res, profile) => {
-  const user = {};
-  user.userName = profile.name.givenName + profile.name.familyName;
-  user.email = profile.emails[0].value;
-  user.provider = profile.provider;
-  user.facebookId = profile.id;
-  user.active = true;
+  const user = {
+    userName: profile.name.givenName + profile.name.familyName,
+    email: profile.emails[0].value,
+    provider: profile.provider,
+    facebookId: profile.id,
+    active: true
+  };
 
   database.saveFacebookUser(user)
     .then( data => {

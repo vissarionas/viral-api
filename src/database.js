@@ -1,20 +1,22 @@
 require('dotenv').config();
 const NodeCouchDb = require('node-couchdb');
-const config = require('config');
+const config = require('config').couch;
 
 const couch = new NodeCouchDb({
-  host: config.get('couch.dbConfig.host'),
-  protocol: config.get('couch.dbConfig.protocol'),
-  port: config.get('couch.dbConfig.port'),
+  host: config.get('dbConfig.host'),
+  protocol: config.get('dbConfig.protocol'),
+  port: config.get('dbConfig.port'),
   auth: {
     user: process.env.DB_USERNAME,
     pass: process.env.DB_PASSWORD
   },
 });
 
-const usersDb = config.get('couch.databases.users');
-const usersByEmailView = config.get('couch.views.usersByEmail');
-const userByFacebookId = config.get('couch.views.usersByFacebookId');
+const usersDb = config.get('databases.users');
+const usersByEmailView = config.get('views.usersByEmail');
+const userByFacebookId = config.get('views.usersByFacebookId');
+const postsDb = config.get('databases.posts');
+const postsByUserIdView = config.get('views.postsByUserId')
 
 const saveEmailUser = (user) => {
   return new Promise(function (resolve, reject) {
@@ -60,6 +62,15 @@ const getUserById = (userId) => {
   });
 };
 
+const getProfile = (req, res, userId) => {
+  couch.get(usersDb, userId)
+  .then(({data, headers, status}) => {
+    res.status(200).send(data);
+  }, err => {
+    res.send(err);
+  });
+};
+
 const getUserByEmail = (email) => {
   return new Promise(function (resolve, reject) {
     couch.get(usersDb, usersByEmailView, {key: email})
@@ -90,10 +101,21 @@ const getUserByFacebookId = (facebookId) => {
   });
 };
 
+const getAllPosts = (req, res) => {
+    couch.get(postsDb, postsByUserIdView, {})
+    .then(({data, headers, status}) => {
+      res.status(200).send(data.rows);
+    }, err => {
+      res.send(err);  
+    });
+};
+
 module.exports = {
   getUserById,
   getUserByEmail,
   saveEmailUser,
   getUserByFacebookId,
-  saveFacebookUser
+  saveFacebookUser,
+  getAllPosts,
+  getProfile
 }

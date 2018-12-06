@@ -4,9 +4,10 @@ const morgan = require('morgan');
 const compression = require('compression');
 const passport = require('passport');
 const authentication = require('./src/authentication');
-const register = require('./src/register');
+const registerEmailUser = require('./src/register').registerEmailUser;
 const database = require('./src/database');
-const config = require('config');
+const config = require('config').App;
+
 const app = express();
 
 require('./src/passport-strategies');
@@ -22,28 +23,27 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get('/', (req, res) => {
-  res.status(200).send({message: "Root path"});
+  res.status(200).send('ROOT');
 });
 
-app.get(config.get('App.endpoints.user'), passport.authenticate('jwt', { session: false }), (req, res) => {
-  database.getUserById(req.user.userId)
-  .then((user) => {
-    res.status(200).send(user);
-  }, err => {
-    res.status(404).send(err);
-  });
+app.get(config.get('endpoints.profile'), passport.authenticate('jwt', { session: false }), (req, res) => {
+  database.getProfile(req, res, req.user.userId);
 });
 
-app.post(config.get('App.endpoints.login'), passport.authenticate('local', { session: false }), (req, res) => {
+app.get(config.get('endpoints.posts'), passport.authenticate('jwt', { session: false}), (req, res) => {
+  database.getAllPosts(req, res);
+});
+
+app.post(config.get('endpoints.login'), passport.authenticate('local', { session: false }), (req, res) => {
   res.send(req.user);
 });
 
-app.post(config.get('App.endpoints.register'), (req, res) => {
-  register.registerEmailUser(req, res);
+app.post(config.get('endpoints.register'), (req, res) => {
+  registerEmailUser(req, res);
 });
 
-app.post(config.get('App.endpoints.facebookAuthenticate'), (req, res) => {
+app.post(config.get('endpoints.facebookAuthenticate'), (req, res) => {
   authentication.facebookAuthenticate(req, res);
 });
 
-app.listen(config.get('App.server.port'), () => console.log('Server started on http://127.0.0.1:3000'));
+app.listen(config.get('server.port'), () => console.log('Server started on http://127.0.0.1:3000'));
