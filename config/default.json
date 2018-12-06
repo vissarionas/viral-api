@@ -7,7 +7,8 @@
       "login": "/login",
       "register": "/register",
       "facebookAuthenticate": "/auth/facebook",
-      "user": "/user"
+      "profile": "/profile",
+      "posts": "/posts"
     },
     "jwt": {
       "JWT_SECRET": "This is the jwt secret",
@@ -26,11 +27,12 @@
     },
     "databases": {
       "users": "users",
-      "tokens": "tokens"
+      "posts": "posts"
     },
     "views": {
       "usersByEmail": "_design/allUsers/_view/by-email",
-      "usersByFacebookId": "_design/allUsers/_view/by-facebook-id"
+      "usersByFacebookId": "_design/allUsers/_view/by-facebook-id",
+      "postsByUserId": "_design/allPosts/_view/by-user-id"
     }
   }
 }
