@@ -1,15 +1,8 @@
 const passport = require('passport');
-const facebookTokenStrategy = require('passport-facebook-token');
 const database = require('./database');
 const register = require('./register');
-const config = require('config');
 
-passport.use(new facebookTokenStrategy({
-  clientID: config.get('App.facebookDevCredentials.FB_CLIENT_ID'),
-  clientSecret: config.get('App.facebookDevCredentials.FB_CLIENT_SECRET'),
-}, (accessToken, refreshToken, profile, done) => {
-  return done(null, profile, null);
-}));
+require('./passport-strategies');
 
 const facebookAuthenticate = (req, res) => {
   passport.authenticate('facebook-token', (err, profile, info) => {
