@@ -14,7 +14,7 @@ passport.use(new JwtStrategy({
   jwtFromRequest:ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: config.get('App.jwt.JWT_SECRET')
 }, (jwt_payload, done) => {
-  return done(null, jwt_payload.userId);
+  return done(null, jwt_payload);
 }));
 
 app.use(require('body-parser').urlencoded({ extended: true }));
