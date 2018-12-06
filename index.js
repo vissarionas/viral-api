@@ -5,9 +5,12 @@ const compression = require('compression');
 const passport = require('passport');
 const authentication = require('./src/authentication');
 const register = require('./src/register');
+const database = require('./src/database');
 const config = require('config');
+const LocalStrategy = require('passport-local').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
+const bcrypt = require('bcryptjs');
 
 const app = express();
 
@@ -17,6 +20,19 @@ passport.use(new JwtStrategy({
 }, (jwt_payload, done) => {
   return done(null, jwt_payload);
 }));
+
+passport.use(new LocalStrategy(
+  (username, password, done) => {
+    database.getUserByEmail(username)
+    .then(user => {
+      bcrypt.compare(password, user.value, (error, response) => {
+        return done(null, response ? user : false);
+      });
+    }, err => {
+      return done(err);
+    });
+  }
+));
 
 app.use(require('body-parser').urlencoded({ extended: true }));
 app.use(morgan("common"));
@@ -33,12 +49,16 @@ app.get('/', (req, res) => {
 });
 
 app.get(config.get('App.endpoints.user'), passport.authenticate('jwt', { session: false }), (req, res) => {
-  res.status(200).send({Token_payload_user: req.user});
-  // Check if user exists
+  database.getUserById(req.user.userId)
+  .then((user) => {
+    res.status(200).send(user);
+  }, err => {
+    res.status(404).send(err);
+  });
 });
 
-app.post(config.get('App.endpoints.emailLogin'), (req, res) => {
-  authentication.loginWithEmail(req, res);
+app.post(config.get('App.endpoints.login'), passport.authenticate('local', { session: false }), (req, res) => {
+  res.send(req.user);
 });
 
 app.post(config.get('App.endpoints.register'), (req, res) => {
