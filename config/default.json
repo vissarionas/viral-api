@@ -4,7 +4,7 @@
       "port": 3000
     },
     "endpoints": {
-      "emailLogin": "/login",
+      "login": "/login",
       "register": "/register",
       "facebookAuthenticate": "/auth/facebook",
       "user": "/user"
@@ -20,8 +20,8 @@
   },
   "couch": {
     "dbConfig": {
-      "host": "some_url_hosting_couchdb",
-      "protocol": "https",
+      "host": "localhost",
+      "protocol": "http",
       "port": 5984
     },
     "databases": {

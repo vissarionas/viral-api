@@ -53,11 +53,7 @@ const getUserById = (userId) => {
   return new Promise(function (resolve, reject) {
     couch.get(usersDb, userId)
     .then(({data, headers, status}) => {
-      if (data.rows[0]) {
-        resolve(data.rows[0]);
-      } else {
-        reject();
-      }
+      resolve(data);
     }, err => {
       reject(err);
     });
