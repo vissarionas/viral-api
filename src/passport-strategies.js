@@ -1,34 +1,35 @@
 const passport = require('passport');
 const facebookTokenStrategy = require('passport-facebook-token');
+const LocalStrategy = require('passport-local').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const config = require('config');
+const bcrypt = require('bcryptjs');
+const database = require('./database');
+
+passport.use(new LocalStrategy(
+  (username, password, done) => {
+    database.getUserByEmail(username)
+    .then(user => {
+      bcrypt.compare(password, user.value, (error, response) => {
+        return done(null, response ? user : false);
+      });
+    }, err => {
+      return done(err);
+    });
+  }
+));
 
 passport.use(new JwtStrategy({
   jwtFromRequest:ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: config.get('App.jwt.JWT_SECRET')
 }, (jwt_payload, done) => {
-  return done(null, jwt_payload.userId);
+  return done(null, jwt_payload);
 }));
 
 passport.use(new facebookTokenStrategy({
   clientID: config.get('App.facebookDevCredentials.FB_CLIENT_ID'),
   clientSecret: config.get('App.facebookDevCredentials.FB_CLIENT_SECRET'),
 }, (accessToken, refreshToken, profile, done) => {
-  return done(profile);
+  return done(null, profile, null);
 }));
-
-
-module.exports = {
-  jwt: function (req, res) {
-    passport.authenticate('jwt', { session: false }), (req, res) => {
-      res.status(200).send(req.user);
-    }
-  },
-  facebookToken: function (req, res) {
-    passport.authenticate('facebook-token', function(error, user, info) {
-      // do stuff with user
-      res.ok();
-    })(req, res);
-  }
-};
