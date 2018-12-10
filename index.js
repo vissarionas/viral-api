@@ -6,6 +6,7 @@ const passport = require('passport');
 const authentication = require('./src/authentication');
 const registerEmailUser = require('./src/register').registerEmailUser;
 const database = require('./src/database');
+const mongoUtils = require('./src/mongo/utils');
 const config = require('config').App;
 
 const app = express();
@@ -23,7 +24,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get('/', (req, res) => {
-  res.status(200).send('ROOT');
+  mongoUtils.saveEmailUser(req, res);
 });
 
 app.get(config.get('endpoints.profile'), passport.authenticate('jwt', { session: false }), (req, res) => {
