@@ -23,7 +23,7 @@
     "dbConfig": {
       "host": "localhost",
       "protocol": "http",
-      "port": 5984
+      "port": 8091
     },
     "databases": {
       "users": "users",
@@ -33,6 +33,18 @@
       "usersByEmail": "_design/allUsers/_view/by-email",
       "usersByFacebookId": "_design/allUsers/_view/by-facebook-id",
       "postsByUserId": "_design/allPosts/_view/by-user-id"
+    }
+  },
+  "mongo": {
+    "credentials": {
+      "user": "admin",
+      "password": 123456
+    },
+    "databases": {
+      "viral": "mongodb://admin:123456@localhost:27017/viral"
+    },
+    "collections": {
+
     }
   }
 }
