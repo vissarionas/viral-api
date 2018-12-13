@@ -1,5 +1,4 @@
 const passport = require('passport');
-const database = require('./database');
 const register = require('./register');
 
 require('./passport-strategies');

@@ -1,6 +1,4 @@
 const MongoClient = require('mongodb').MongoClient;
-const bcrypt = require('bcryptjs');
-const uniqid = require('uniqid');
 const config = require('config').mongo;
 
 const dbName = config.get('databases.viral');
@@ -16,11 +14,7 @@ const getUserByEmail = (email) => {
         email: email
       })
       .then((userObject) => {
-        if (userObject) {
-          resolve(userObject);
-        } else {
-          reject(null);
-        }
+        resolve(userObject);
       }, err => {
         reject(err);
       });
@@ -28,30 +22,22 @@ const getUserByEmail = (email) => {
   });
 };
 
-const saveUser = (req, res) => {
-  const email = req.body.email;
-  getUserByEmail(email)
-  .then((userObject) => {
-    res.status(409).send(userObject);
-  },() => {
+const saveUser = (user) => {
+  return new Promise(function (resolve, reject) {
     client.connect()
     .then(() => {
       const db = client.db(dbName);
-      db.collection('users').insertOne({
-        _id: uniqid(),
-        userName: email.split('@')[0],
-        email: email,
-        password: bcrypt.hashSync(req.body.password, 10),
-        verified: false
-      })
+      db.collection('users').insertOne(user)
       .then((data) => {
-        client.close();
-        res.status(200).send(data);
+        resolve(data);
+      }, err => {
+        reject(err);
       });
     });
   });
 };
 
 module.exports = {
+  getUserByEmail,
   saveUser
 };
