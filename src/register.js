@@ -16,6 +16,8 @@ const registerEmailUser = (req, res) => {
         username: email.split('@')[0],
         email: email,
         password: bcrypt.hashSync(req.body.password, 10),
+        provider: '',
+        facebookId: '',
         verified: false
       }
     
@@ -29,20 +31,24 @@ const registerEmailUser = (req, res) => {
   });
 };
 
-// const registerFacebookUser = (req, res, profile) => {
-//   const user = {
-//     userName: profile.name.givenName + profile.name.familyName,
-//     email: profile.emails[0].value,
-//     provider: profile.provider,
-//     facebookId: profile.id,
-//     active: true
-//   };
+const registerFacebookUser = (req, res, fbProfile) => {   
+  const user = {
+    _id: uniqid(),
+    username: fbProfile.name.givenName + fbProfile.name.familyName,
+    email: fbProfile.emails[0].value,
+    password: '',
+    provider: 'facebook',
+    facebookId: fbProfile.id,
+    verified: true
+  }
 
-//   database.saveFacebookUser(user)
-//     .then( data => {
-//       signAndSendToken(req, res, data.id);
-//   });
-// }
+  mongoUtils.saveUser(user)
+    .then(data => {
+      signAndSendToken(req, res, data.insertedId);
+  }, err => {
+      res.send(err);
+  });  
+};
 
 const signAndSendToken = (req, res, userId) => {
   jwt.sign( {userId: userId}, config.get('App.jwt.JWT_SECRET'), {expiresIn: config.get('App.jwt.EXPIRATION')}, (err, token) => {
@@ -52,5 +58,6 @@ const signAndSendToken = (req, res, userId) => {
 
 module.exports = {
   registerEmailUser,
+  registerFacebookUser,
   signAndSendToken
 };
