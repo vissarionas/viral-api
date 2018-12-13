@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const database = require('./database');
+// const database = require('./database');
 const config = require('config');
 
 const registerEmailUser = (req, res) => {
