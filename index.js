@@ -4,7 +4,7 @@ const morgan = require('morgan');
 const compression = require('compression');
 const passport = require('passport');
 const authentication = require('./src/authentication');
-const mongoUtils = require('./src/mongo/utils');
+const register = require('./src/register');
 const config = require('config').App;
 
 const app = express();
@@ -38,7 +38,7 @@ app.post(config.get('endpoints.login'), passport.authenticate('local', { session
 });
 
 app.post(config.get('endpoints.register'), (req, res) => {
-  mongoUtils.saveUser(req, res);
+  register.registerEmailUser(req, res);
 });
 
 app.post(config.get('endpoints.facebookAuthenticate'), (req, res) => {
