@@ -4,8 +4,6 @@ const morgan = require('morgan');
 const compression = require('compression');
 const passport = require('passport');
 const authentication = require('./src/authentication');
-const registerEmailUser = require('./src/register').registerEmailUser;
-const database = require('./src/database');
 const mongoUtils = require('./src/mongo/utils');
 const config = require('config').App;
 
@@ -24,15 +22,15 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get('/', (req, res) => {
-  mongoUtils.saveEmailUser(req, res);
+  mongoUtils.insertTest();
 });
 
 app.get(config.get('endpoints.profile'), passport.authenticate('jwt', { session: false }), (req, res) => {
-  database.getProfile(req, res, req.user.userId);
+  // database.getProfile(req, res, req.user.userId);
 });
 
 app.get(config.get('endpoints.posts'), passport.authenticate('jwt', { session: false}), (req, res) => {
-  database.getAllPosts(req, res);
+  // database.getAllPosts(req, res);
 });
 
 app.post(config.get('endpoints.login'), passport.authenticate('local', { session: false }), (req, res) => {
@@ -40,7 +38,7 @@ app.post(config.get('endpoints.login'), passport.authenticate('local', { session
 });
 
 app.post(config.get('endpoints.register'), (req, res) => {
-  registerEmailUser(req, res);
+  mongoUtils.saveUser(req, res);
 });
 
 app.post(config.get('endpoints.facebookAuthenticate'), (req, res) => {
