@@ -13,9 +13,30 @@ const getUserByEmail = (email) => {
       db.collection('users').findOne({
         email: email
       })
-      .then((userObject) => {
+      .then(userObject => {
+        client.close();
         resolve(userObject);
       }, err => {
+        client.close();
+        reject(err);
+      });
+    });
+  });
+};
+
+const getUserByFacebookId = (fbId) => {
+  return new Promise(function (resolve, reject) {
+    client.connect()
+    .then(() => {
+      const db = client.db(dbName);
+      db.collection('users').findOne({
+        facebookId: fbId
+      })
+      .then(userObject => {
+        client.close();
+        resolve(userObject);
+      }, err => {
+        client.close();
         reject(err);
       });
     });
@@ -29,8 +50,10 @@ const saveUser = (user) => {
       const db = client.db(dbName);
       db.collection('users').insertOne(user)
       .then((data) => {
+        client.close();
         resolve(data);
       }, err => {
+        client.close();
         reject(err);
       });
     });
@@ -39,5 +62,6 @@ const saveUser = (user) => {
 
 module.exports = {
   getUserByEmail,
+  getUserByFacebookId,
   saveUser
 };

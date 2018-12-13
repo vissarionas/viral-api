@@ -1,5 +1,6 @@
 const passport = require('passport');
 const register = require('./register');
+const mongoUtils = require('./mongo/utils');
 
 require('./passport-strategies');
 
@@ -13,13 +14,14 @@ const facebookAuthenticate = (req, res) => {
         res.send(err);
       }
     } else {
-      database.getUserByFacebookId(profile.id)
+      mongoUtils.getUserByFacebookId(profile.id)
       .then(user => {
+        if (user) {
           register.signAndSendToken(req, res, user.id);
-        }, (err) => {
+        } else {
           register.registerFacebookUser(req, res, profile);
         }
-      );
+      });
     };
   })(req, res);
 };
