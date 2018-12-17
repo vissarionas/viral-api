@@ -8,6 +8,7 @@
       "register": "/register",
       "facebookAuthenticate": "/auth/facebook",
       "profile": "/profile",
+      "user": "/user",
       "posts": "/posts"
     },
     "jwt": {

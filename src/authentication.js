@@ -1,6 +1,5 @@
 const passport = require('passport');
 const register = require('./register');
-const mongoUtils = require('./mongo/utils');
 
 const facebookAuthenticate = (req, res) => {
   passport.authenticate('facebook-token', (err, profile, info) => {

@@ -11,14 +11,23 @@ const client = new MongoClient(config.get('url'), {
   }
 });
 
+const getProfile = (req, res, id) => {
+  client.connect()
+  .then(() => {
+    const db = client.db(dbName);
+    db.collection(config.get('collections.users')).findOne({_id: id})
+    .then(profile => res.status(200).send(profile));
+  }, err => {
+    console.log(err);
+  });
+};
+
 const getUserByFacebookId = (facebookId) => {
   return new Promise(function (resolve, reject) {
     client.connect()
     .then(() => {
       const db = client.db(dbName);
-      db.collection('users').findOne({
-        facebookId: facebookId
-      })
+      db.collection(config.get('collections.users')).findOne({facebookId: facebookId})
       .then(userObject => {
         resolve(userObject);
         client.close();
@@ -104,6 +113,7 @@ const saveFacebookUser = (user) => {
 };
 
 module.exports = {
+  getProfile,
   getUserByEmail,
   getUserByFacebookId,
   saveEmailUser,

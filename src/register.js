@@ -1,8 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-module.uniqid_debug = true;
 const uniqid = require('uniqid');
-const mongoUtils = require('./mongo/utils');
+const mongoUsers = require('./mongo/users');
 const config = require('config');
 
 const registerEmailUser = (req, res) => {
@@ -17,7 +16,7 @@ const registerEmailUser = (req, res) => {
     verified: false
   }
   
-  mongoUtils.saveEmailUser(user)
+  mongoUsers.saveEmailUser(user)
   .then(data => {
     if (data) {
       signAndSendToken(req, res, user._id);
@@ -40,7 +39,7 @@ const registerFacebookUser = (req, res, profile) => {
     verified: true
   }
 
-  mongoUtils.saveFacebookUser(user)
+  mongoUsers.saveFacebookUser(user)
     .then(data => {
       if (data) {
         signAndSendToken(req, res, data._id);
