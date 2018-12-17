@@ -22,7 +22,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get('/', (req, res) => {
-  mongoUtils.insertTest();
+  res.status(200).send('ROOT');
 });
 
 app.get(config.get('endpoints.profile'), passport.authenticate('jwt', { session: false }), (req, res) => {

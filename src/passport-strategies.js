@@ -5,10 +5,11 @@ const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const config = require('config');
 const bcrypt = require('bcryptjs');
+const mongoUtils = require('./mongo/utils');
 
 passport.use(new LocalStrategy(
   (username, password, done) => {
-    database.getUserByEmail(username)
+    mongoUtils.getUserByEmail(username)
     .then(user => {
       bcrypt.compare(password, user.value, (error, response) => {
         return done(null, response ? user : false);
