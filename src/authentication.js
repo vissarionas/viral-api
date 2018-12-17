@@ -2,8 +2,6 @@ const passport = require('passport');
 const register = require('./register');
 const mongoUtils = require('./mongo/utils');
 
-require('./passport-strategies');
-
 const facebookAuthenticate = (req, res) => {
   passport.authenticate('facebook-token', (err, profile, info) => {
     if (err) {
@@ -14,14 +12,9 @@ const facebookAuthenticate = (req, res) => {
         res.send(err);
       }
     } else {
-      mongoUtils.getUserByFacebookId(profile.id)
-      .then(user => {
-        if (user) {
-          register.signAndSendToken(req, res, user.id);
-        } else {
-          register.registerFacebookUser(req, res, profile);
-        }
-      });
+      if (profile) {
+       register.registerFacebookUser(req, res, profile);
+      }
     };
   })(req, res);
 };

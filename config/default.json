@@ -23,13 +23,14 @@
     "url": "mongodb://localhost:27017",
     "credentials": {
       "user": "admin",
-      "password": 123456
+      "password": "123456"
     },
     "databases": {
       "viral": "viral"
     },
     "collections": {
-      "users": "users"
+      "users": "users",
+      "posts": "posts"
     }
   }
 }

@@ -2,9 +2,34 @@ const MongoClient = require('mongodb').MongoClient;
 const config = require('config').mongo;
 
 const dbName = config.get('databases.viral');
-const client = new MongoClient(config.get('url'), {useNewUrlParser: true});
+const client = new MongoClient(config.get('url'), {
+  useNewUrlParser: true,
+  authSource: dbName,
+  auth: {
+    user: config.get('credentials.user'),
+    password: config.get('credentials.password')
+  }
+});
 
-// Resolves if user is found, and rejects if user is not found
+const getUserByFacebookId = (facebookId) => {
+  return new Promise(function (resolve, reject) {
+    client.connect()
+    .then(() => {
+      const db = client.db(dbName);
+      db.collection('users').findOne({
+        facebookId: facebookId
+      })
+      .then(userObject => {
+        resolve(userObject);
+        client.close();
+      }, err => {
+        reject(err);
+        client.close();
+      });
+    });
+  });
+};
+
 const getUserByEmail = (email) => {
   return new Promise(function (resolve, reject) {
     client.connect()
@@ -14,47 +39,65 @@ const getUserByEmail = (email) => {
         email: email
       })
       .then(userObject => {
-        client.close();
         resolve(userObject);
-      }, err => {
         client.close();
+      }, err => {
         reject(err);
+        client.close();
       });
     });
   });
 };
 
-const getUserByFacebookId = (fbId) => {
+const saveEmailUser = (user) => {
   return new Promise(function (resolve, reject) {
     client.connect()
     .then(() => {
       const db = client.db(dbName);
-      db.collection('users').findOne({
-        facebookId: fbId
-      })
+      db.collection('users').findOne({email: user.email})
       .then(userObject => {
-        client.close();
-        resolve(userObject);
+        if (!userObject) {
+          db.collection('users').insertOne(user)
+          .then((data) => {
+            resolve(data);
+            client.close();
+          }, err => {
+            reject(err);
+            client.close();
+          });
+        } else {
+          resolve(userObject);
+        }
       }, err => {
-        client.close();
         reject(err);
+        client.close();
       });
     });
   });
 };
 
-const saveUser = (user) => {
+const saveFacebookUser = (user) => {
   return new Promise(function (resolve, reject) {
     client.connect()
     .then(() => {
       const db = client.db(dbName);
-      db.collection('users').insertOne(user)
-      .then((data) => {
-        client.close();
-        resolve(data);
+      db.collection('users').findOne({facebookId: user.facebookId})
+      .then(userObject => {
+        if (!userObject) {
+          db.collection('users').insertOne(user)
+          .then(() => {
+            resolve(user);
+            client.close();
+          }, err => {
+            reject(err);
+            client.close();
+          });
+        } else {
+          resolve(userObject);
+        }
       }, err => {
-        client.close();
         reject(err);
+        client.close();
       });
     });
   });
@@ -63,5 +106,6 @@ const saveUser = (user) => {
 module.exports = {
   getUserByEmail,
   getUserByFacebookId,
-  saveUser
+  saveEmailUser,
+  saveFacebookUser
 };
