@@ -28,7 +28,7 @@ const registerEmailUser = (req, res) => {
   });
 };
 
-const registerFacebookUser = (req, res, profile) => {   
+const authenticateFacebookUser = (req, res, profile) => {   
   const user = {
     _id: uniqid(),
     username: profile.name.givenName + profile.name.familyName,
@@ -59,6 +59,6 @@ const signAndSendToken = (req, res, userId) => {
 
 module.exports = {
   registerEmailUser,
-  registerFacebookUser,
+  authenticateFacebookUser,
   signAndSendToken
 };

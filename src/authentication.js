@@ -12,7 +12,7 @@ const facebookAuthenticate = (req, res) => {
       }
     } else {
       if (profile) {
-       register.registerFacebookUser(req, res, profile);
+       register.authenticateFacebookUser(req, res, profile);
       }
     };
   })(req, res);

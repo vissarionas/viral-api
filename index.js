@@ -26,12 +26,8 @@ app.get('/', (req, res) => {
   res.status(200).send('ROOT');
 });
 
-app.get(config.get('endpoints.profile'), passport.authenticate('jwt', { session: false }), (req, res) => {
-  mongoUsers.getProfile(req, res, req.user.userId);
-});
-
 app.post(config.get('endpoints.user'), passport.authenticate('jwt', { session: false }), (req, res) => {
-  mongoUsers.getProfile(req, res, req.query.user);
+  mongoUsers.getUserById(req, res, req.query.user);
 });
 
 app.get(config.get('endpoints.posts'), passport.authenticate('jwt', { session: false}), (req, res) => {
@@ -39,7 +35,7 @@ app.get(config.get('endpoints.posts'), passport.authenticate('jwt', { session: f
 });
 
 app.post(config.get('endpoints.login'), passport.authenticate('local', { session: false }), (req, res) => {
-  res.send(req.user);
+  register.signAndSendToken(req, res, req.user._id);
 });
 
 app.post(config.get('endpoints.register'), (req, res) => {

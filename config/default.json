@@ -7,7 +7,6 @@
       "login": "/login",
       "register": "/register",
       "facebookAuthenticate": "/auth/facebook",
-      "profile": "/profile",
       "user": "/user",
       "posts": "/posts"
     },
@@ -21,10 +20,10 @@
     }
   },
   "mongo": {
-    "url": "mongodb://localhost:27017",
+    "uri": "mongodb://viralcluster-shard-00-00-0tzt8.mongodb.net:27017,viralcluster-shard-00-01-0tzt8.mongodb.net:27017,viralcluster-shard-00-02-0tzt8.mongodb.net:27017/test?ssl=true&replicaSet=ViralCluster-shard-0&authSource=admin&retryWrites=true",
     "credentials": {
       "user": "admin",
-      "password": "123456"
+      "password": "katsekalagerasime"
     },
     "databases": {
       "viral": "viral"
