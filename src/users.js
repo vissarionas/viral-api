@@ -1,21 +1,6 @@
-const MongoClient = require('mongodb').MongoClient;
 const config = require('config').mongo;
-
 const dbName = config.get('databases.viral');
-const client = new MongoClient(config.get('uri'), {
-  useNewUrlParser: true,
-  auth: {
-    user: config.get('credentials.user'),
-    password: config.get('credentials.password')
-  }
-});
-
-client.connect()
-.then(() => {
-  console.log('MongoDb connection opened');
-}, err => {
-  console.log(err);
-});
+const client = require('./dbConnection');
 
 const getUserById = (req, res, id) => {
   const db = client.db(dbName);
@@ -38,7 +23,8 @@ const getUserByFacebookId = (facebookId) => {
 const getUserByEmail = (email) => {
   return new Promise(function (resolve, reject) {
     const db = client.db(dbName);
-    db.collection('users').findOne({email: email})
+    db.collection('users').findOne({email: email
+    })
     .then(userObject => {
       if (userObject) {
         resolve(userObject);
