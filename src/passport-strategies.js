@@ -11,9 +11,9 @@ passport.use(new LocalStrategy(
   (username, password, done) => {
     mongoUsers.getUserByEmail(username)
     .then(user => {
-      bcrypt.compare(password, user.value, (error, response) => {
+      bcrypt.compare(password, user.password, (error, response) => {
         return done(null, response ? user : false);
-      });
+      });      
     }, err => {
       return done(err);
     });

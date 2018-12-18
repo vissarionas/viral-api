@@ -2,16 +2,15 @@ const MongoClient = require('mongodb').MongoClient;
 const config = require('config').mongo;
 
 const dbName = config.get('databases.viral');
-const client = new MongoClient(config.get('url'), {
+const client = new MongoClient(config.get('uri'), {
   useNewUrlParser: true,
-  authSource: dbName,
   auth: {
     user: config.get('credentials.user'),
     password: config.get('credentials.password')
   }
 });
 
-const getProfile = (req, res, id) => {
+const getUserById = (req, res, id) => {
   client.connect()
   .then(() => {
     const db = client.db(dbName);
@@ -48,11 +47,16 @@ const getUserByEmail = (email) => {
         email: email
       })
       .then(userObject => {
-        resolve(userObject);
-        client.close();
+        if (userObject) {
+          resolve(userObject);
+          // client.close();
+        } else {
+          reject(null);
+          // client.close();
+        };
       }, err => {
         reject(err);
-        client.close();
+        // client.close();
       });
     });
   });
@@ -113,7 +117,7 @@ const saveFacebookUser = (user) => {
 };
 
 module.exports = {
-  getProfile,
+  getUserById,
   getUserByEmail,
   getUserByFacebookId,
   saveEmailUser,
