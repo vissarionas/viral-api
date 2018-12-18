@@ -6,7 +6,7 @@ const passport = require('passport');
 const authentication = require('./src/authentication');
 const register = require('./src/register');
 const config = require('config').App;
-const mongoUsers = require('./src/mongo/users');
+const users = require('./src/users');
 
 const app = express();
 
@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
 });
 
 app.post(config.get('endpoints.user'), passport.authenticate('jwt', { session: false }), (req, res) => {
-  mongoUsers.getUserById(req, res, req.query.user);
+  users.getUserById(req, res, req.query.user);
 });
 
 app.get(config.get('endpoints.posts'), passport.authenticate('jwt', { session: false}), (req, res) => {
