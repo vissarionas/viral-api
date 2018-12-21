@@ -8,7 +8,8 @@
       "register": "/register",
       "facebookAuthenticate": "/auth/facebook",
       "user": "/user",
-      "posts": "/posts"
+      "posts": "/posts",
+      "savePost": "/savepost"
     },
     "jwt": {
       "JWT_SECRET": "This is the jwt secret",

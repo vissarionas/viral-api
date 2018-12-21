@@ -35,6 +35,10 @@ app.get(config.get('endpoints.posts'), passport.authenticate('jwt', { session: f
   posts.getIntersectedPosts(req, res);
 });
 
+app.post(config.get('endpoints.savePost'), passport.authenticate('jwt', { session: false}), (req, res) => {
+  posts.savePost(req, res);
+});
+
 app.post(config.get('endpoints.login'), passport.authenticate('local', { session: false }), (req, res) => {
   register.signAndSendToken(req, res, req.user._id);
 });
