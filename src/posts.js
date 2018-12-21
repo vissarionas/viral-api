@@ -13,6 +13,25 @@ const getAllPosts = (req, res) => {
   });
 };
 
+const createPostObject = (body, location) => {
+  const postObject = {
+    "_id": "something",
+    "user": "some user id",
+    "body": body,
+    "geo": {
+      "type": "Polygon",
+      "coordinates": []
+    }
+  }
+  return createPostObject;
+};
+
+const testFunction = () => {
+  return 'something';
+}
+
 module.exports = {
-  getAllPosts
+  getAllPosts,
+  createPostObject,
+  testFunction
 }
