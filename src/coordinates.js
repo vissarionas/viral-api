@@ -8,27 +8,34 @@ const createCoordinatesBox = (location, increment) => {
     [
       // TOP LEFT
       location.lon + increment,
-      location.lat - increment
+      location.lat - increment < -180
+      ? 180 - (increment - (180 - (location.lat * -1)))
+      : location.lat - increment
+        
     ],
     [
       // TOP RIGHT
       location.lon + increment,
-      location.lat + increment
+      location.lat + increment > 180 ? increment - (180 - location.lat) : location.lat + increment
     ],
     [
       // BOTTOM RIGHT
       location.lon - increment,
-      location.lat + increment 
+      location.lat + increment > 180 ? increment - (180 - location.lat) : location.lat + increment
     ],
     [
       // BOTTOM LEFT
       location.lon - increment,
-      location.lat - increment
+      location.lat - increment < -180
+      ? 180 - (increment - (180 - (location.lat * -1)))
+      : location.lat - increment
     ],
     [
       // TOP LEFT
       location.lon + increment,
-      location.lat - increment
+      location.lat - increment < -180
+      ? 180 - (increment - (180 - (location.lat * -1)))
+      : location.lat - increment
     ]
   );
   return coordinatesBox;
