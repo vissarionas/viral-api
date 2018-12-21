@@ -32,7 +32,7 @@ app.post(config.get('endpoints.user'), passport.authenticate('jwt', { session: f
 });
 
 app.get(config.get('endpoints.posts'), passport.authenticate('jwt', { session: false}), (req, res) => {
-  posts.getAllPosts(req, res);
+  posts.getIntersectedPosts(req, res);
 });
 
 app.post(config.get('endpoints.login'), passport.authenticate('local', { session: false }), (req, res) => {
