@@ -1,41 +1,41 @@
-const createCoordinatesBox = (location, increment) => {
+const createCoordinatesBox = (longitude, latitude, increment) => {
   const coordinatesBox = [];
   // Prevent exceeeding poles
-  location.lon = location.lon > 90 - increment ? 90 - increment : location.lon;
-  location.lon = location.lon < -90 + increment ? -90 + increment : location.lon;
+  longitude = longitude > 90 - increment ? 90 - increment : longitude;
+  longitude = longitude < -90 + increment ? -90 + increment : longitude;
   // Create a box(Polygon) surrounding post's location point
   coordinatesBox.push(
     [
       // top left
-      location.lon + increment,
-      location.lat - increment < -180
-      ? 180 - (increment - (180 - (location.lat * -1)))
-      : location.lat - increment
+      longitude + increment,
+      latitude - increment < -180
+      ? 180 - (increment - (180 - (latitude * -1)))
+      : latitude - increment
         
     ],
     [
       // top right
-      location.lon + increment,
-      location.lat + increment > 180 ? increment - (180 - location.lat) : location.lat + increment
+      longitude + increment,
+      latitude + increment > 180 ? increment - (180 - latitude) : latitude + increment
     ],
     [
       // bottom right
-      location.lon - increment,
-      location.lat + increment > 180 ? increment - (180 - location.lat) : location.lat + increment
+      longitude - increment,
+      latitude + increment > 180 ? increment - (180 - latitude) : latitude + increment
     ],
     [
       // bottom left
-      location.lon - increment,
-      location.lat - increment < -180
-      ? 180 - (increment - (180 - (location.lat * -1)))
-      : location.lat - increment
+      longitude - increment,
+      latitude - increment < -180
+      ? 180 - (increment - (180 - (latitude * -1)))
+      : latitude - increment
     ],
     [
       // top left
-      location.lon + increment,
-      location.lat - increment < -180
-      ? 180 - (increment - (180 - (location.lat * -1)))
-      : location.lat - increment
+      longitude + increment,
+      latitude - increment < -180
+      ? 180 - (increment - (180 - (latitude * -1)))
+      : latitude - increment
     ]
   );
   return coordinatesBox;

@@ -12,7 +12,7 @@ const getIntersectedPosts = (req, res) => {
       $geoIntersects: {
         $geometry: {
           type: "Point",
-          coordinates: [Number(longitude), Number(latitude)]
+          coordinates: [parseFloat(longitude), parseFloat(latitude)]
         }
       }
     }
@@ -25,15 +25,29 @@ const getIntersectedPosts = (req, res) => {
   });
 };
 
-const createPostObject = (body, location) => {
-  const coordinateBox = coordinates.createCoordinatesBox(location, 0.05)
+const savePost = (req, res) => {
+  const db = client.db(dbName);
+  const user = req.user.userId;
+  const body = req.body.content;
+  const longitude = req.body.longitude;
+  const latitude = req.body.latitude;
+  const postObject = createPostObject(user, body, parseFloat(longitude), parseFloat(latitude));
+  db.collection(config.get('collections.posts')).insertOne(postObject)
+  .then((result) => {
+    res.send(result);
+  }, err => {
+    res.send(err);
+  })
+};
+
+const createPostObject = (user, content, longitude, latitude) => {
+  const coordinateBox = coordinates.createCoordinatesBox(longitude, latitude, 0.05)
   const postObject = {
-    "_id": "something",
-    "user": "some user id",
-    "body": body,
-    "geo": {
-      "type": "Polygon",
-      "coordinates": [
+    user: user,
+    content: content,
+    geo: {
+      type: "Polygon",
+      coordinates: [
         coordinateBox
       ]
     }
@@ -41,12 +55,7 @@ const createPostObject = (body, location) => {
   return postObject;
 };
 
-const testFunction = () => {
-  return 'something';
-}
-
 module.exports = {
   getIntersectedPosts,
-  createPostObject,
-  testFunction
+  savePost
 }
