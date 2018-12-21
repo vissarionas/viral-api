@@ -24,7 +24,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get('/', (req, res) => {
-  res.status(200).send('ROOT');
+  res.send('ROOT');
 });
 
 app.post(config.get('endpoints.user'), passport.authenticate('jwt', { session: false }), (req, res) => {
