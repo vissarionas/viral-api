@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const uniqid = require('uniqid');
 const users = require('./users');
+const mailer = require('./mailer');
 
 const registerEmailUser = (req, res) => {
   const email = req.body.email;
@@ -56,8 +57,14 @@ const signAndSendToken = (req, res, userId) => {
   });
 }
 
+const sendVerificationEmail = (req, res) => {
+  const email = req.user.email;
+  mailer.createAndSendVerificationEmail(email)
+}
+
 module.exports = {
   registerEmailUser,
   authenticateFacebookUser,
-  signAndSendToken
+  signAndSendToken,
+  sendVerificationEmail
 };
