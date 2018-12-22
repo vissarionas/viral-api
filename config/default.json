@@ -1,16 +1,14 @@
 {
-  "App": {
-    "server": {
-      "port": 3000
-    },
-    "endpoints": {
-      "login": "/login",
-      "register": "/register",
-      "facebookAuthenticate": "/auth/facebook",
-      "user": "/user",
-      "posts": "/posts",
-      "savePost": "/savepost"
-    }
+  "server" : {
+    "port": 3000
+  },
+  "endpoints": {
+    "login": "/login",
+    "register": "/register",
+    "facebookAuthenticate": "/auth/facebook",
+    "user": "/user",
+    "posts": "/posts",
+    "savePost": "/savepost"
   },
   "mongo": {
     "databases": {
