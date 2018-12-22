@@ -1,5 +1,5 @@
 const config = require('config').mongo;
-const dbName = config.get('databases.viral');
+const dbName = config.get('database');
 const client = require('./dbConnection');
 const coordinates = require('./coordinates');
 
