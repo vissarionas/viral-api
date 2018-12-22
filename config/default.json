@@ -10,22 +10,9 @@
       "user": "/user",
       "posts": "/posts",
       "savePost": "/savepost"
-    },
-    "jwt": {
-      "JWT_SECRET": "This is the jwt secret",
-      "EXPIRATION": "30 days"
-    },
-    "facebookDevCredentials": {
-      "FB_CLIENT_ID": "543664692723936",
-      "FB_CLIENT_SECRET": "2938af1d6607fcde320a62210612ff5b"
     }
   },
   "mongo": {
-    "uri": "mongodb://viralcluster-shard-00-00-0tzt8.mongodb.net:27017,viralcluster-shard-00-01-0tzt8.mongodb.net:27017,viralcluster-shard-00-02-0tzt8.mongodb.net:27017/test?ssl=true&replicaSet=ViralCluster-shard-0&authSource=admin&retryWrites=true",
-    "credentials": {
-      "user": "admin",
-      "password": "katsekalagerasime"
-    },
     "databases": {
       "viral": "viral"
     },

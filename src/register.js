@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const uniqid = require('uniqid');
 const users = require('./users');
-const config = require('config');
 
 const registerEmailUser = (req, res) => {
   const email = req.body.email;
@@ -52,7 +51,7 @@ const authenticateFacebookUser = (req, res, profile) => {
 };
 
 const signAndSendToken = (req, res, userId) => {
-  jwt.sign( {userId: userId}, config.get('App.jwt.JWT_SECRET'), {expiresIn: config.get('App.jwt.EXPIRATION')}, (err, token) => {
+  jwt.sign( {userId: userId}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRATION}, (err, token) => {
     res.send(token);
   });
 }
