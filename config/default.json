@@ -5,15 +5,13 @@
   "endpoints": {
     "login": "/login",
     "register": "/register",
-    "facebookAuthenticate": "/auth/facebook",
+    "facebook": "/facebook",
     "user": "/user",
     "posts": "/posts",
     "savePost": "/savepost"
   },
   "mongo": {
-    "databases": {
-      "viral": "viral"
-    },
+    "database": "viral",
     "collections": {
       "users": "users",
       "posts": "posts"
