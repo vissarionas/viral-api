@@ -11,6 +11,7 @@ const posts = require('./src/posts');
 
 const app = express();
 
+require('dotenv').config();
 require('./src/passport-strategies');
 
 app.use(require('body-parser').urlencoded({ extended: true }));

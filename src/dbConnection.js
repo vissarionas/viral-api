@@ -1,10 +1,10 @@
-const config = require('config').mongo;
+require('dotenv').config();
 const MongoClient = require('mongodb').MongoClient;
-const client = new MongoClient(config.get('uri'), {
+const client = new MongoClient(process.env.DB_URL, {
   useNewUrlParser: true,
   auth: {
-    user: config.get('credentials.user'),
-    password: config.get('credentials.password')
+    user: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD
   }
 });
 

@@ -3,7 +3,6 @@ const facebookTokenStrategy = require('passport-facebook-token');
 const LocalStrategy = require('passport-local').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
-const config = require('config');
 const bcrypt = require('bcryptjs');
 const users = require('./users');
 
@@ -22,14 +21,14 @@ passport.use(new LocalStrategy(
 
 passport.use(new JwtStrategy({
   jwtFromRequest:ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: config.get('App.jwt.JWT_SECRET')
+  secretOrKey: process.env.JWT_SECRET
 }, (jwt_payload, done) => {
   return done(null, jwt_payload);
 }));
 
 passport.use(new facebookTokenStrategy({
-  clientID: config.get('App.facebookDevCredentials.FB_CLIENT_ID'),
-  clientSecret: config.get('App.facebookDevCredentials.FB_CLIENT_SECRET'),
+  clientID: process.env.FB_CLIENT_ID,
+  clientSecret: process.env.FB_CLIENT_SECRET,
 }, (accessToken, refreshToken, profile, done) => {
   return done(null, profile, null);
 }));
