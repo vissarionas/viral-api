@@ -19,7 +19,8 @@ const registerEmailUser = (req, res) => {
   users.saveEmailUser(user)
   .then(data => {
     if (data) {
-      signAndSendToken(req, res, user._id);
+      sendVerificationEmail(req, res);
+      // signAndSendToken(req, res, user._id);
     } else {
       res.status(409).send(userObject);
     }
@@ -55,12 +56,27 @@ const signAndSendToken = (req, res, userId) => {
   jwt.sign( {userId: userId}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRATION}, (err, token) => {
     res.send(token);
   });
-}
+};
+
+const generateRegistrationToken = (email) => {
+  return new Promise(function (resolve, reject) {
+    jwt.sign( {email: email}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_REGISTRATION_EXPIRATION}, (err, token) => {
+      resolve(token);
+    }, err => {
+      reject(err);
+    });
+  });
+};
 
 const sendVerificationEmail = (req, res) => {
-  const email = req.user.email;
-  mailer.createAndSendVerificationEmail(email)
-}
+  const email = req.body.email;
+  generateRegistrationToken(email)
+  .then(token => {
+    mailer.createAndSendVerificationEmail(req, res, email, token)
+  }, err => {
+    console.log(err);
+  })
+};
 
 module.exports = {
   registerEmailUser,

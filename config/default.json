@@ -8,7 +8,8 @@
     "facebook": "/facebook",
     "user": "/user",
     "posts": "/posts",
-    "savePost": "/savepost"
+    "savePost": "/savepost",
+    "verify": "/verify"
   },
   "mongo": {
     "database": "viral",
