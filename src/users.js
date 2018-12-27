@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const config = require('config').mongo;
 const dbName = config.get('database');
 const client = require('./dbConnection');
@@ -80,13 +79,13 @@ const saveFacebookUser = (user) => {
   });
 };
 
-const verifyUser = (req, res) => {
+const setUserAsVerified = (email) => {
+  const db = client.db(dbName);
   return new Promise(function (resolve, reject) {
-    const db = client.db(dbName);
     db.collection('users').updateOne(
-      { email: req.user.email }, { $set: { verified: true } })
-      .then(() => res.send('USER VERIFIED')
-      ,err => console.log(err));
+      { email: email },
+      { $set: { verified: true } })
+      .then(data => resolve(data), err => reject(err));
   });
 };
 
@@ -96,5 +95,5 @@ module.exports = {
   getUserByFacebookId,
   saveEmailUser,
   saveFacebookUser,
-  verifyUser
+  setUserAsVerified
 };
