@@ -84,8 +84,9 @@ const verifyUser = (req, res) => {
   return new Promise(function (resolve, reject) {
     const db = client.db(dbName);
     db.collection('users').updateOne(
-
-    )
+      { email: req.user.email }, { $set: { verified: true } })
+      .then(() => res.send('USER VERIFIED')
+      ,err => console.log(err));
   });
 };
 
