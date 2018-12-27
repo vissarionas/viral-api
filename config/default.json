@@ -17,5 +17,12 @@
       "users": "users",
       "posts": "posts"
     }
+  },
+  "mailer": {
+    "verification": {
+      "sender": "viral@app.com",
+      "subject": "Email verification :)",
+      "endpoint": "http://127.0.0.1:3000/verify?token="
+    }
   }
 }
