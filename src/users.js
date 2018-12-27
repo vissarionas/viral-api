@@ -85,7 +85,13 @@ const setUserAsVerified = (email) => {
     db.collection('users').updateOne(
       { email: email },
       { $set: { verified: true } })
-      .then(data => resolve(data), err => reject(err));
+      .then(data => {
+        if (data.modifiedCount) {
+          resolve(data)
+        } else {
+          reject(data.modifiedCount);
+        }
+      }, err => reject(err));
   });
 };
 
