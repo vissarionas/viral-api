@@ -17,7 +17,7 @@ const registerEmailUser = (req, res) => {
   }
   
   users.saveEmailUser(user)
-  .then(() => sendVerificationEmail(req, res, user.email), err => res.send(err));
+  .then(() => sendVerificationEmail(req, res, user), err => res.send(err));
 };
 
 const authenticateFacebookUser = (req, res, profile) => {   
@@ -43,15 +43,15 @@ const authenticateFacebookUser = (req, res, profile) => {
   });  
 };
 
-const signAndSendToken = (req, res, userId) => {
-  jwt.sign( {userId: userId}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRATION}, (err, token) => {
+const signAndSendToken = (req, res) => {
+  jwt.sign( {id: req.user.id, email: req.user.email}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRATION}, (err, token) => {
     res.send(token);
   });
 };
 
-const generateRegistrationToken = (email) => {
+const generateRegistrationToken = (user) => {
   return new Promise(function (resolve, reject) {
-    jwt.sign( {email: email}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_REGISTRATION_EXPIRATION}, (err, token) => {
+    jwt.sign( {id: user._id, email: user.email}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_REGISTRATION_EXPIRATION}, (err, token) => {
       resolve(token);
     }, err => {
       reject(err);
@@ -59,18 +59,24 @@ const generateRegistrationToken = (email) => {
   });
 };
 
-const sendVerificationEmail = (req, res, email) => {
-  generateRegistrationToken(email)
+const sendVerificationEmail = (req, res, user) => {
+  generateRegistrationToken(user)
   .then(token => {
-    mailer.createAndSendVerificationEmail(req, res, email, token)
+    mailer.createAndSendVerificationEmail(req, res, user.email, token)
   }, err => {
     res.send(err);
   })
+};
+
+const verifyUser = (req, res) => {
+  users.setUserAsVerified(req.user.email)
+  .then(() => signAndSendToken(req, res), err => console.log(err));
 };
 
 module.exports = {
   registerEmailUser,
   authenticateFacebookUser,
   signAndSendToken,
-  sendVerificationEmail
+  sendVerificationEmail,
+  verifyUser
 };

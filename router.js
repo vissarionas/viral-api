@@ -44,7 +44,7 @@ rootRouter.post(config.get('register'), (req, res) => {
 });
 
 rootRouter.get(config.get('verify'), passport.authenticate('jwt', { session: false }),  (req, res) => {
-  users.verifyUser(req, res);
+  register.verifyUser(req, res);
 });
 
 externalAuthRouter.post(config.get('facebook'), (req, res) => {
