@@ -70,7 +70,11 @@ const sendVerificationEmail = (req, res, user) => {
 
 const verifyUser = (req, res) => {
   users.setUserAsVerified(req.user.email)
-  .then(() => signAndSendToken(req, res), err => console.log(err));
+  .then(() => {
+    signAndSendToken(req, res)
+  }, err => {
+    res.send(err);
+  });
 };
 
 module.exports = {
