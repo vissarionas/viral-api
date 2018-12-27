@@ -12,7 +12,7 @@ const externalAuthRouter = express.Router();
 
 // middleware that is specific to this router
 rootRouter.use(function timeLog (req, res, next) {
-  console.log('Time: ', Date.now());
+  console.log('Middleware example. Time: ', Date.now());
   next();
 });
 
@@ -41,6 +41,10 @@ rootRouter.post(config.get('login'), passport.authenticate('local', { session: f
 
 rootRouter.post(config.get('register'), (req, res) => {
   register.registerEmailUser(req, res);
+});
+
+rootRouter.get(config.get('verify'), passport.authenticate('jwt', { session: false }),  (req, res) => {
+  users.verifyUser(req, res);
 });
 
 externalAuthRouter.post(config.get('facebook'), (req, res) => {

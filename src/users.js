@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const config = require('config').mongo;
 const dbName = config.get('database');
 const client = require('./dbConnection');
@@ -79,10 +80,20 @@ const saveFacebookUser = (user) => {
   });
 };
 
+const verifyUser = (req, res) => {
+  return new Promise(function (resolve, reject) {
+    const db = client.db(dbName);
+    db.collection('users').updateOne(
+
+    )
+  });
+};
+
 module.exports = {
   getUserById,
   getUserByEmail,
   getUserByFacebookId,
   saveEmailUser,
-  saveFacebookUser
+  saveFacebookUser,
+  verifyUser
 };

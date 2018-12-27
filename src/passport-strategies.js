@@ -20,7 +20,10 @@ passport.use(new LocalStrategy(
 ));
 
 passport.use(new JwtStrategy({
-  jwtFromRequest:ExtractJwt.fromAuthHeaderAsBearerToken(),
+  jwtFromRequest: ExtractJwt.fromExtractors([
+    ExtractJwt.fromHeader('token'),
+    ExtractJwt.fromUrlQueryParameter('token')
+  ]),
   secretOrKey: process.env.JWT_SECRET
 }, (jwt_payload, done) => {
   return done(null, jwt_payload);
