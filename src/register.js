@@ -17,16 +17,7 @@ const registerEmailUser = (req, res) => {
   }
   
   users.saveEmailUser(user)
-  .then(data => {
-    if (data) {
-      sendVerificationEmail(req, res);
-      // signAndSendToken(req, res, user._id);
-    } else {
-      res.status(409).send(userObject);
-    }
-  }, err => {
-      res.send(err);
-  });
+  .then(() => sendVerificationEmail(req, res, user.email), err => res.send(err));
 };
 
 const authenticateFacebookUser = (req, res, profile) => {   
@@ -68,13 +59,12 @@ const generateRegistrationToken = (email) => {
   });
 };
 
-const sendVerificationEmail = (req, res) => {
-  const email = req.body.email;
+const sendVerificationEmail = (req, res, email) => {
   generateRegistrationToken(email)
   .then(token => {
     mailer.createAndSendVerificationEmail(req, res, email, token)
   }, err => {
-    console.log(err);
+    res.send(err);
   })
 };
 

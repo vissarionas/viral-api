@@ -51,7 +51,7 @@ const saveEmailUser = (user) => {
           reject(err);
         });
       } else {
-        resolve(userObject);
+        reject('user exists');
       }
     }, err => {
       reject(err);
