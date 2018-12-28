@@ -5,6 +5,7 @@ const express = require('express');
 const passport = require('passport');
 const externalAuthentication = require('./src/externalAuthentication');
 const register = require('./src/register');
+const login = require('./src/login');
 const users = require('./src/users');
 const posts = require('./src/posts');
 const rootRouter = express.Router();
@@ -36,7 +37,7 @@ rootRouter.post(config.get('savePost'), passport.authenticate('jwt', { session: 
 });
 
 rootRouter.post(config.get('login'), passport.authenticate('local', { session: false }), (req, res) => {
-  register.signAndSendToken(req, res, req.user._id);
+  login.logUserIn(req, res);
 });
 
 rootRouter.post(config.get('register'), (req, res) => {

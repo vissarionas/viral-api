@@ -59,10 +59,10 @@ const generateRegistrationToken = (user) => {
   });
 };
 
-const sendVerificationEmail = (req, res, user) => {
-  generateRegistrationToken(user)
+const sendVerificationEmail = (req, res) => {
+  generateRegistrationToken(req.user)
   .then(token => {
-    mailer.createAndSendVerificationEmail(req, res, user.email, token)
+    mailer.createAndSendVerificationEmail(req, res, token)
   }, err => {
     res.send(err);
   })
@@ -70,10 +70,10 @@ const sendVerificationEmail = (req, res, user) => {
 
 const verifyUser = (req, res) => {
   users.setUserAsVerified(req.user.email)
-  .then(() => {
-    signAndSendToken(req, res)
+  .then((data) => {
+    res.send('USER SUCCESSFULLY VERIFIED');
   }, err => {
-    res.send(err);
+    res.send('USER ALREADY VERIFIED');
   });
 };
 
