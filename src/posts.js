@@ -34,7 +34,7 @@ const savePost = (req, res) => {
   const postObject = createPostObject(user, body, parseFloat(longitude), parseFloat(latitude));
   db.collection(config.get('collections.posts')).insertOne(postObject)
   .then((result) => {
-    res.send(result);
+    res.send(result.insertedCount);
   }, err => {
     res.send(err);
   })
