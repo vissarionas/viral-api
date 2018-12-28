@@ -62,8 +62,8 @@ const saveFacebookUser = (user) => {
   return new Promise(function (resolve, reject) {
     const db = client.db(dbName);
     db.collection('users').findOne({facebookId: user.facebookId})
-    .then(userObject => {
-      if (!userObject) {
+    .then(facebookUser => {
+      if (!facebookUser) {
         db.collection('users').insertOne(user)
         .then(() => {
           resolve(user);
@@ -71,7 +71,7 @@ const saveFacebookUser = (user) => {
           reject(err);
         });
       } else {
-        resolve(userObject);
+        resolve(facebookUser);
       }
     }, err => {
       reject(err);

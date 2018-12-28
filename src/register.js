@@ -20,31 +20,11 @@ const registerEmailUser = (req, res) => {
   .then(() => sendVerificationEmail(req, res, user), err => res.send(err));
 };
 
-const authenticateFacebookUser = (req, res, profile) => {   
-  const user = {
-    _id: uniqid(),
-    username: profile.name.givenName + profile.name.familyName,
-    email: profile.emails[0].value,
-    password: '',
-    provider: 'facebook',
-    facebookId: profile.id,
-    verified: true
-  }
-
-  users.saveFacebookUser(user)
-    .then(data => {
-      if (data) {
-        signAndSendToken(req, res, data._id);
-      } else {
-        res.status(409).send(userObject);
-      }
-  }, err => {
-      res.send(err);
-  });  
-};
-
-const signAndSendToken = (req, res) => {
-  jwt.sign( {id: req.user.id, email: req.user.email}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRATION}, (err, token) => {
+const signAndSendToken = (req, res, externalUser) => {
+  const payload = externalUser
+  ? { id: externalUser._id, email: externalUser.email }
+  : { id: req.user.id, email: req.user.email };
+  jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRATION}, (err, token) => {
     res.send(token);
   });
 };
@@ -79,7 +59,6 @@ const verifyUser = (req, res) => {
 
 module.exports = {
   registerEmailUser,
-  authenticateFacebookUser,
   signAndSendToken,
   sendVerificationEmail,
   verifyUser
