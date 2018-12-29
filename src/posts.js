@@ -34,17 +34,18 @@ const savePost = (req, res) => {
   const postObject = createPostObject(user, body, parseFloat(longitude), parseFloat(latitude));
   db.collection(config.get('collections.posts')).insertOne(postObject)
   .then((result) => {
-    res.send(result.insertedCount);
+    res.send(result);
   }, err => {
     res.send(err);
   })
 };
 
 const createPostObject = (user, content, longitude, latitude) => {
-  const coordinateBox = coordinates.createCoordinatesBox(longitude, latitude, 0.05)
+  const coordinateBox = coordinates.createCoordinatesBox(longitude, latitude, 0.02)
   const postObject = {
     user: user,
     content: content,
+    initialGeo: {longitude, latitude},
     geo: {
       type: "Polygon",
       coordinates: [
