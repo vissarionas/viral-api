@@ -11,7 +11,6 @@ const posts = require('./src/posts');
 const rootRouter = express.Router();
 const externalAuthRouter = express.Router();
 
-// middleware that is specific to this router
 rootRouter.use(function timeLog (req, res, next) {
   console.log('Middleware example. Time: ', Date.now());
   next();
@@ -34,6 +33,10 @@ rootRouter.get(config.get('posts'), passport.authenticate('jwt', { session: fals
 
 rootRouter.post(config.get('savePost'), passport.authenticate('jwt', { session: false}), (req, res) => {
   posts.savePost(req, res);
+});
+
+rootRouter.post(config.get('likePost'), passport.authenticate('jwt', { session: false}), (req, res) => {
+  posts.likePost(req, res);
 });
 
 rootRouter.post(config.get('login'), passport.authenticate('local', { session: false }), (req, res) => {

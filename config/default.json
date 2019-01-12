@@ -9,6 +9,7 @@
     "user": "/user",
     "posts": "/posts",
     "savePost": "/savepost",
+    "likePost": "/like",
     "verify": "/verify"
   },
   "mongo": {
