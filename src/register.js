@@ -17,7 +17,17 @@ const registerEmailUser = (req, res) => {
   }
   
   users.saveEmailUser(user)
-  .then(() => sendVerificationEmail(req, res, user), err => res.send(err));
+  .then(() => {
+    signAndSendToken(req, res, user);
+    generateRegistrationToken(user)
+    .then(tempToken => {
+      mailer.sendVerificationEmail(email, tempToken)
+    }, err => {
+      res.send(err);
+    });
+  }, err => {
+    res.send(err);
+  });
 };
 
 const signAndSendToken = (req, res, externalUser) => {
@@ -39,19 +49,10 @@ const generateRegistrationToken = (user) => {
   });
 };
 
-const sendVerificationEmail = (req, res) => {
-  generateRegistrationToken(req.user)
-  .then(token => {
-    mailer.createAndSendVerificationEmail(req, res, token)
-  }, err => {
-    res.send(err);
-  })
-};
-
 const verifyUser = (req, res) => {
   users.setUserAsVerified(req.user.email)
   .then((data) => {
-    res.send('USER SUCCESSFULLY VERIFIED');
+    res.send('USER VERIFIED. GO BACK TO THE APP');
   }, err => {
     res.send('USER ALREADY VERIFIED');
   });
@@ -60,6 +61,5 @@ const verifyUser = (req, res) => {
 module.exports = {
   registerEmailUser,
   signAndSendToken,
-  sendVerificationEmail,
   verifyUser
 };

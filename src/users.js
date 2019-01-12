@@ -8,6 +8,10 @@ const getUserById = (req, res, id) => {
   .then(profile => res.status(200).send(profile));
 };
 
+const isVerified = (user) => {
+
+};
+
 const getUserByFacebookId = (facebookId) => {
   return new Promise(function (resolve, reject) {
     const db = client.db(dbName);
@@ -101,5 +105,6 @@ module.exports = {
   getUserByFacebookId,
   saveEmailUser,
   saveFacebookUser,
-  setUserAsVerified
+  setUserAsVerified,
+  isVerified
 };

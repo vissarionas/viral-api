@@ -11,7 +11,7 @@ passport.use(new LocalStrategy(
     users.getUserByEmail(username)
     .then(user => {
       bcrypt.compare(password, user.password, (error, response) => {
-        return done(null, response ? user : false);
+        return done(null, response ? response : user);
       });      
     }, err => {
       return done(err);

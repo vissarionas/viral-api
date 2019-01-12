@@ -1,10 +1,9 @@
 const register = require('./register');
 
 const logUserIn = (req, res) => {
-  if (req.user.verified) {
-    register.signAndSendToken(req, res);
-  } else {
-    register.sendVerificationEmail(req, res);
+  register.signAndSendToken(req, res);
+  if (!req.user.verified) {
+    // Send verification email
   }
 }
 
