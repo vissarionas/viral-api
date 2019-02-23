@@ -2,16 +2,6 @@
   "server" : {
     "port": 3000
   },
-  "endpoints": {
-    "login": "/login",
-    "register": "/register",
-    "facebook": "/facebook",
-    "user": "/user",
-    "posts": "/posts",
-    "savePost": "/savepost",
-    "likePost": "/like",
-    "verify": "/verify"
-  },
   "mongo": {
     "database": "viral",
     "collections": {

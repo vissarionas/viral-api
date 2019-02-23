@@ -9,13 +9,13 @@ const signAndSendToken = (req, res, externalUser) => {
     ? { id: externalUser._id, email: externalUser.email }
     : { id: req.user._id, email: req.user.email };
   jwt.sign(payload, process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRATION },
+    { expiresIn: process.env.JWT_DURATION },
     (err, token) => res.send(token));
 };
 
 const generateTemporaryToken = user => new Promise(function (resolve, reject) {
   jwt.sign({ id: user._id, email: user.email },
-    process.env.JWT_SECRET, { expiresIn: process.env.JWT_REGISTRATION_EXPIRATION },
+    process.env.JWT_SECRET, { expiresIn: process.env.JWT_TEMP_DURATION },
     (err, token) => resolve(token),
     err => reject(err));
 });
@@ -42,7 +42,7 @@ const registerEmailUser = (req, res) => {
     err => res.send(err));
 };
 
-const verifyUser = (req, res) => {
+const certifyUser = (req, res) => {
   users.setUserAsVerified(req.user.email)
     .then(data => res.send(data),
       err => res.send(err));
@@ -51,5 +51,5 @@ const verifyUser = (req, res) => {
 module.exports = {
   registerEmailUser,
   signAndSendToken,
-  verifyUser
+  certifyUser
 };
