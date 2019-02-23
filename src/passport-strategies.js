@@ -1,21 +1,17 @@
 const passport = require('passport');
-const facebookTokenStrategy = require('passport-facebook-token');
+const FacebookTokenStrategy = require('passport-facebook-token');
 const LocalStrategy = require('passport-local').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
-const ExtractJwt = require('passport-jwt').ExtractJwt;
 const bcrypt = require('bcryptjs');
 const users = require('./users');
+
+const { ExtractJwt } = JwtStrategy;
 
 passport.use(new LocalStrategy(
   (username, password, done) => {
     users.getUserByEmail(username)
-    .then(user => {
-      bcrypt.compare(password, user.password, (error, response) => {
-        return done(null, response ? response : user);
-      });      
-    }, err => {
-      return done(err);
-    });
+      .then(user => bcrypt.compare(password, user.password, (err, res) => done(null, res || user)),
+        err => done(err));
   }
 ));
 
@@ -25,13 +21,9 @@ passport.use(new JwtStrategy({
     ExtractJwt.fromUrlQueryParameter('token')
   ]),
   secretOrKey: process.env.JWT_SECRET
-}, (jwt_payload, done) => {
-  return done(null, jwt_payload);
-}));
+}, (jwtPayload, done) => done(null, jwtPayload)));
 
-passport.use(new facebookTokenStrategy({
+passport.use(new FacebookTokenStrategy({
   clientID: process.env.FB_CLIENT_ID,
   clientSecret: process.env.FB_CLIENT_SECRET,
-}, (accessToken, refreshToken, profile, done) => {
-  return done(null, profile, null);
-}));
+}, (accessToken, refreshToken, profile, done) => done(null, profile, null)));
