@@ -1,97 +1,71 @@
 const config = require('config').mongo;
 const dbName = config.get('database');
-const client = require('./dbConnection');
+const client = require('./dbClient');
 
 const getUserById = (req, res, id) => {
   const db = client.db(dbName);
-  db.collection(config.get('collections.users')).findOne({_id: id})
-  .then(profile => res.status(200).send(profile));
+
+  db.collection(config.get('collections.users')).findOne({ id })
+    .then(profile => res.status(200).send(profile),
+      err => res.status(err.status).send(err));
 };
 
-const isVerified = (user) => {
+const getUserByFacebookId = facebookId => new Promise(function (resolve, reject) {
+  const db = client.db(dbName);
+  db.collection(config.get('collections.users')).findOne({ facebookId })
+    .then(userObject => resolve(userObject),
+      err => reject(err));
+});
 
-};
 
-const getUserByFacebookId = (facebookId) => {
-  return new Promise(function (resolve, reject) {
-    const db = client.db(dbName);
-    db.collection(config.get('collections.users')).findOne({facebookId: facebookId})
-    .then(userObject => {
-      resolve(userObject);
-    }, err => {
-      reject(err);
-    });
-  });
-};
-
-const getUserByEmail = (email) => {
-  return new Promise(function (resolve, reject) {
-    const db = client.db(dbName);
-    db.collection('users').findOne({email: email
-    })
-    .then(userObject => {
+const getUserByEmail = email => new Promise(function (resolve, reject) {
+  const db = client.db(dbName);
+  db.collection('users').findOne({ email })
+    .then((userObject) => {
       if (userObject) {
         resolve(userObject);
       } else {
-        reject(null);
-      };
-    }, err => {
-      reject(err);
-    });
-  });
-};
+        reject(new Error({ message: 'user does not exist' }));
+      }
+    }, err => reject(err));
+});
 
-const saveEmailUser = (user) => {
-  return new Promise(function (resolve, reject) {
-    const db = client.db(dbName);
-    db.collection('users').findOne({email: user.email})
-    .then(userObject => {
+const saveEmailUser = user => new Promise(function (resolve, reject) {
+  const db = client.db(dbName);
+  db.collection('users').findOne({ email: user.email })
+    .then((userObject) => {
       if (!userObject) {
         db.collection('users').insertOne(user)
-        .then((data) => {
-          resolve(data);
-        }, err => {
-          reject(err);
-        });
+          .then(data => resolve(data),
+            err => reject(err));
       } else {
-        reject('user exists');
+        reject(new Error({ message: 'user exist' }));
       }
-    }, err => {
-      reject(err);
-    });
-  });
-};
+    }, err => reject(err));
+});
 
-const saveFacebookUser = (user) => {
-  return new Promise(function (resolve, reject) {
-    const db = client.db(dbName);
-    db.collection('users').findOne({facebookId: user.facebookId})
-    .then(facebookUser => {
+
+const saveFacebookUser = user => new Promise(function (resolve, reject) {
+  const db = client.db(dbName);
+  db.collection('users').findOne({ facebookId: user.facebookId })
+    .then((facebookUser) => {
       if (!facebookUser) {
         db.collection('users').insertOne(user)
-        .then(() => {
-          resolve(user);
-        }, err => {
-          reject(err);
-        });
+          .then(() => resolve(user),
+            err => reject(err));
       } else {
         resolve(facebookUser);
       }
-    }, err => {
-      reject(err);
-    });
-  });
-};
+    }, err => reject(err));
+});
 
 const setUserAsVerified = (email) => {
   const db = client.db(dbName);
   return new Promise(function (resolve, reject) {
-    db.collection('users').updateOne(
-      { email: email },
-      { $set: { verified: true } })
-      .then(data => {
+    db.collection('users').updateOne({ email }, { $set: { verified: true } })
+      .then((data) => {
         if (data.modifiedCount) {
-          resolve(data)
+          resolve(data);
         } else {
           reject(data.modifiedCount);
         }
@@ -106,5 +80,4 @@ module.exports = {
   saveEmailUser,
   saveFacebookUser,
   setUserAsVerified,
-  isVerified
 };

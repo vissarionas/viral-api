@@ -8,7 +8,7 @@ const sendVerificationEmail = (email, tempToken) => {
     to: email,
     from: config.get('verification.sender'),
     subject: config.get('verification.subject'),
-    text: `${config.get('verification.endpoint')+tempToken}`,
+    text: `${config.get('verification.endpoint') + tempToken}`,
   };
   sgMail.send(msg);
   // Notify user that the verification mail is on it's way

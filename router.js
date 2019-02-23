@@ -11,7 +11,7 @@ const posts = require('./src/posts');
 const rootRouter = express.Router();
 const externalAuthRouter = express.Router();
 
-rootRouter.use(function timeLog (req, res, next) {
+rootRouter.use(function timeLog(req, res, next) {
   console.log('Middleware example. Time: ', Date.now());
   next();
 });
@@ -27,27 +27,27 @@ rootRouter.post(config.get('user'), passport.authenticate('jwt', { session: fals
   users.getUserById(req, res, req.query.user);
 });
 
-rootRouter.get(config.get('posts'), passport.authenticate('jwt', { session: false}), (req, res) => {
+rootRouter.get(config.get('posts'), passport.authenticate('jwt', { session: false }), (req, res) => {
   posts.getIntersectedPosts(req, res);
 });
 
-rootRouter.post(config.get('savePost'), passport.authenticate('jwt', { session: false}), (req, res) => {
+rootRouter.post(config.get('savePost'), passport.authenticate('jwt', { session: false }), (req, res) => {
   posts.savePost(req, res);
 });
 
-rootRouter.post(config.get('likePost'), passport.authenticate('jwt', { session: false}), (req, res) => {
+rootRouter.post(config.get('likePost'), passport.authenticate('jwt', { session: false }), (req, res) => {
   posts.likePost(req, res);
 });
 
 rootRouter.post(config.get('login'), passport.authenticate('local', { session: false }), (req, res) => {
-  login.logUserIn(req, res);
+  login.logIn(req, res);
 });
 
 rootRouter.post(config.get('register'), (req, res) => {
   register.registerEmailUser(req, res);
 });
 
-rootRouter.get(config.get('verify'), passport.authenticate('jwt', { session: false }),  (req, res) => {
+rootRouter.get(config.get('verify'), passport.authenticate('jwt', { session: false }), (req, res) => {
   register.verifyUser(req, res);
 });
 
