@@ -41,7 +41,8 @@ const saveEmailUser = user => new Promise(function (resolve, reject) {
       } else {
         reject(new Error({ message: 'user exist' }));
       }
-    }, err => reject(err));
+    },
+    err => reject(new Error(err)));
 });
 
 

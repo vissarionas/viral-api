@@ -2,15 +2,14 @@ const passport = require('passport');
 const FacebookTokenStrategy = require('passport-facebook-token');
 const LocalStrategy = require('passport-local').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
+const { ExtractJwt } = require('passport-jwt');
 const bcrypt = require('bcryptjs');
 const users = require('./users');
-
-const { ExtractJwt } = JwtStrategy;
 
 passport.use(new LocalStrategy(
   (username, password, done) => {
     users.getUserByEmail(username)
-      .then(user => bcrypt.compare(password, user.password, (err, res) => done(null, res || user)),
+      .then(user => bcrypt.compare(password, user.password, () => done(null, user)),
         err => done(err));
   }
 ));

@@ -7,7 +7,7 @@ const mailer = require('./mailer');
 const signAndSendToken = (req, res, externalUser) => {
   const payload = externalUser
     ? { id: externalUser._id, email: externalUser.email }
-    : { id: req.user.id, email: req.user.email };
+    : { id: req.user._id, email: req.user.email };
   jwt.sign(payload, process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRATION },
     (err, token) => res.send(token));
@@ -38,7 +38,8 @@ const registerEmailUser = (req, res) => {
       generateTemporaryToken(user)
         .then(tempToken => mailer.sendVerificationEmail(email, tempToken),
           err => res.send(err));
-    }, err => res.send(err));
+    },
+    err => res.send(err));
 };
 
 const verifyUser = (req, res) => {

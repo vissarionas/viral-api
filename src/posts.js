@@ -15,7 +15,7 @@ const getPost = (id) => {
 const getIntersectedPosts = (req, res) => {
   const db = client.db(dbName);
   const { longitude } = req.body;
-  const { latitude } = req.body.latitude;
+  const { latitude } = req.body;
   const postsCursor = db.collection(config.get('collections.posts')).find({
     geo: {
       $geoIntersects: {
