@@ -42,6 +42,7 @@ class User {
     const userCollection = db.collection(collectionName);
     try {
       await userCollection.insertOne(userObject);
+      return userObject;
     } catch (err) {
       return Promise.reject(err);
     }

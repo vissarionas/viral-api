@@ -2,11 +2,12 @@ const jwt = require('jsonwebtoken');
 
 class Token {
   static generate(payload, duration) {
-    jwt.sign(
+    const token = jwt.sign(
       payload,
-      duration, process.env.JWT_SECRET,
+      process.env.JWT_SECRET,
       { expiresIn: duration }
     );
+    return token;
   }
 }
 
