@@ -6,7 +6,8 @@
     "database": "viral",
     "collections": {
       "users": "users",
-      "posts": "posts"
+      "posts": "posts",
+      "logs": "logs"
     }
   },
   "mailer": {
