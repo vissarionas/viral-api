@@ -23,35 +23,35 @@ rootRouter.get('/', (req, res, next) => {
   }, 5000);
 }, (req, res) => res.send('ROOT'));
 
-rootRouter.post('user', passport.authenticate('jwt', { session: false }), (req, res) => {
+rootRouter.post('/user', passport.authenticate('jwt', { session: false }), (req, res) => {
   users.getUserById(req, res, req.query.user);
 });
 
-rootRouter.get('posts', passport.authenticate('jwt', { session: false }), (req, res) => {
+rootRouter.get('/posts', passport.authenticate('jwt', { session: false }), (req, res) => {
   posts.getIntersectedPosts(req, res);
 });
 
-rootRouter.post('savePost', passport.authenticate('jwt', { session: false }), (req, res) => {
+rootRouter.post('/savePost', passport.authenticate('jwt', { session: false }), (req, res) => {
   posts.savePost(req, res);
 });
 
-rootRouter.post('like', passport.authenticate('jwt', { session: false }), (req, res) => {
+rootRouter.post('/like', passport.authenticate('jwt', { session: false }), (req, res) => {
   posts.likePost(req, res);
 });
 
-rootRouter.post('login', passport.authenticate('local', { session: false }), (req, res) => {
+rootRouter.post('/login', passport.authenticate('local', { session: false }), (req, res) => {
   login.logIn(req, res);
 });
 
-rootRouter.post('register', (req, res) => {
+rootRouter.post('/register', (req, res) => {
   user.create(req, res);
 });
 
-rootRouter.get('certify', passport.authenticate('jwt', { session: false }), (req, res) => {
+rootRouter.get('/certify', passport.authenticate('jwt', { session: false }), (req, res) => {
   register.certifyUser(req, res);
 });
 
-externalAuthRouter.post('facebook', (req, res) => {
+externalAuthRouter.post('/facebook', (req, res) => {
   externalAuthentication.facebookAuthenticate(req, res);
 });
 
