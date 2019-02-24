@@ -4,6 +4,8 @@ const uniqid = require('uniqid');
 const User = require('./user');
 const token = require('../token');
 
+User.setCollection();
+
 const userObjectConstructor = (email, password) => ({
   _id: uniqid(),
   username: email.split('@')[0],
