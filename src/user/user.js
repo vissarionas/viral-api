@@ -1,17 +1,15 @@
 /* eslint-disable consistent-return */
-const getCollection = require('../shared/dbCollection');
-
-let collection;
+const config = require('config');
+const getCollection = require('../shared/database');
 
 class User {
-  static async setCollection() {
-    const something = await getCollection('users');
-    console.log(something);
+  static async getCollectionInstance() {
+    this.collection = await getCollection(config.mongo.collections.users);
   }
 
   static async getById(id) {
     try {
-      await collection.findOne({ _id: id });
+      await this.collection.findOne({ _id: id });
     } catch (err) {
       return Promise.reject(err);
     }
@@ -19,7 +17,7 @@ class User {
 
   static async getByEmail(email) {
     try {
-      const user = await collection.findOne({ email });
+      const user = await this.collection.findOne({ email });
       if (!user) throw new Error('user does not exist');
       return user;
     } catch (err) {
@@ -29,7 +27,7 @@ class User {
 
   static async getByFacebookId(facebookId) {
     try {
-      await collection.findOne({ facebookId });
+      await this.collection.findOne({ facebookId });
     } catch (err) {
       return Promise.reject(err);
     }
@@ -37,7 +35,7 @@ class User {
 
   static async save(userObject) {
     try {
-      await collection.insertOne(userObject);
+      await this.collection.insertOne(userObject);
       return userObject;
     } catch (err) {
       return Promise.reject(err);
