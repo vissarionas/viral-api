@@ -27,7 +27,9 @@ class User {
 
   static async getByFacebookId(facebookId) {
     try {
-      await this.collection.findOne({ facebookId });
+      const user = await this.collection.findOne({ facebookId });
+      if (!user) throw new Error('user does not exist');
+      return user;
     } catch (err) {
       return Promise.reject(err);
     }
