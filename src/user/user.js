@@ -1,10 +1,10 @@
 /* eslint-disable consistent-return */
-const config = require('config');
-const getCollection = require('../shared/database');
+const config = require('config').mongo;
+const getClient = require('../shared/database');
 
 class User {
-  static async getCollectionInstance() {
-    this.collection = await getCollection(config.mongo.collections.users);
+  static async getClient() {
+    this.collection = await getClient(config.get('collections.users'));
   }
 
   static async getById(id) {
