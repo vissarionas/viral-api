@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const uniqid = require('uniqid');
 const users = require('./users');
-const mailer = require('./mailer');
+const mailer = require('./shared/mailer');
 
 const signAndSendToken = (req, res, externalUser) => {
   const payload = externalUser
@@ -42,14 +42,7 @@ const registerEmailUser = (req, res) => {
     err => res.send(err));
 };
 
-const certifyUser = (req, res) => {
-  users.setUserAsVerified(req.user.email)
-    .then(data => res.send(data),
-      err => res.send(err));
-};
-
 module.exports = {
   registerEmailUser,
   signAndSendToken,
-  certifyUser
 };
