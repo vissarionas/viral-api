@@ -2,7 +2,6 @@ require('./src/passport-strategies');
 
 const express = require('express');
 const passport = require('passport');
-const register = require('./src/register');
 const login = require('./src/login');
 const users = require('./src/users');
 const posts = require('./src/posts');
@@ -46,8 +45,8 @@ rootRouter.post('/register', (req, res) => {
   user.createEmailUser(req, res);
 });
 
-rootRouter.get('/certify', passport.authenticate('jwt', { session: false }), (req, res) => {
-  register.certifyUser(req, res);
+rootRouter.get('/verify', passport.authenticate('jwt', { session: false }), (req, res) => {
+  user.verify(req, res);
 });
 
 externalAuthRouter.post('/facebook', passport.authenticate('facebook-token', { session: false }), (req, res) => {

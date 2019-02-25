@@ -44,6 +44,14 @@ class User {
     }
   }
 
+  static async update(docIdentifier, property, value) {
+    try {
+      this.collection.updateOne({ docIdentifier }, { $set: { [property]: value } });
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  }
+
   static isFacebookUser(userObject) { return userObject.facebookId; }
 }
 
