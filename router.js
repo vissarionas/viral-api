@@ -2,7 +2,6 @@ require('./src/passport-strategies');
 
 const express = require('express');
 const passport = require('passport');
-const externalAuthentication = require('./src/externalAuthentication');
 const register = require('./src/register');
 const login = require('./src/login');
 const users = require('./src/users');
@@ -44,15 +43,15 @@ rootRouter.post('/login', passport.authenticate('local', { session: false }), (r
 });
 
 rootRouter.post('/register', (req, res) => {
-  user.create(req, res);
+  user.createEmailUser(req, res);
 });
 
 rootRouter.get('/certify', passport.authenticate('jwt', { session: false }), (req, res) => {
   register.certifyUser(req, res);
 });
 
-externalAuthRouter.post('/facebook', (req, res) => {
-  externalAuthentication.facebookAuthenticate(req, res);
+externalAuthRouter.post('/facebook', passport.authenticate('facebook-token', { session: false }), (req, res) => {
+  user.createOrUpdateFacebookUser(req, res);
 });
 
 module.exports = {
