@@ -10,10 +10,10 @@ const connectionOptions = {
   }
 };
 
-const getCollection = async (collectionName) => {
+const getClient = async (collectionName) => {
   try {
-    const client = await MongoClient.connect(process.env.DB_URL, connectionOptions);
-    const db = client.db(config.database);
+    const mongoClient = await MongoClient.connect(process.env.DB_URL, connectionOptions);
+    const db = mongoClient.db(config.database);
     const collection = db.collection(collectionName);
     console.log(`DB collection '${collectionName}' connected`);
     return collection;
@@ -22,4 +22,4 @@ const getCollection = async (collectionName) => {
   }
 };
 
-module.exports = getCollection;
+module.exports = getClient;

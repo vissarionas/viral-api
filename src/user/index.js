@@ -2,9 +2,9 @@
 const bcrypt = require('bcryptjs');
 const uniqid = require('uniqid');
 const User = require('./user');
-const token = require('../token');
+const token = require('../shared/token');
 
-User.getCollectionInstance();
+User.getClient();
 
 const userObjectConstructor = (email, password) => ({
   _id: uniqid(),
