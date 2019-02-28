@@ -3,11 +3,13 @@ const config = require('config').mongo;
 const getClient = require('../shared/database');
 
 class User {
-  static async getClient() {
-    this.collection = await getClient(config.get('collections.users'));
+  constructor() {
+    (async () => {
+      this.collection = await getClient(config.get('collections.users'));
+    })();
   }
 
-  static async getById(id) {
+  async getById(id) {
     try {
       await this.collection.findOne({ _id: id });
     } catch (err) {
@@ -15,7 +17,7 @@ class User {
     }
   }
 
-  static async getByEmail(email) {
+  async getByEmail(email) {
     try {
       const user = await this.collection.findOne({ email });
       if (!user) throw new Error('user does not exist');
@@ -25,7 +27,7 @@ class User {
     }
   }
 
-  static async getByFacebookId(facebookId) {
+  async getByFacebookId(facebookId) {
     try {
       const user = await this.collection.findOne({ facebookId });
       if (!user) throw new Error('user does not exist');
@@ -35,7 +37,7 @@ class User {
     }
   }
 
-  static async save(userObject) {
+  async save(userObject) {
     try {
       await this.collection.insertOne(userObject);
       return userObject;
@@ -44,7 +46,7 @@ class User {
     }
   }
 
-  static async update(docIdentifier, property, value) {
+  async update(docIdentifier, property, value) {
     try {
       this.collection.updateOne({ docIdentifier }, { $set: { [property]: value } });
     } catch (err) {
@@ -52,7 +54,9 @@ class User {
     }
   }
 
-  static isFacebookUser(userObject) { return userObject.facebookId; }
+  isFacebookUser(userObject){
+    return userObject.facebookId;
+  }
 }
 
 module.exports = User;
