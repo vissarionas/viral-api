@@ -9,4 +9,6 @@ const generateToken = (payload, duration) => {
   return token;
 };
 
-module.exports = generateToken;
+module.exports = {
+  generateToken
+};

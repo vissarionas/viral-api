@@ -2,8 +2,8 @@
 const bcrypt = require('bcryptjs');
 const uniqid = require('uniqid');
 const User = require('./user');
-const generateToken = require('../shared/token');
-const sendVerificationEmail = require('../shared/mailer');
+const { sendVerificationEmail } = require('../shared/mailer');
+const { generateToken } = require('../shared/token');
 
 const userObjectConstructor = (email, password) => ({
   _id: uniqid(),
@@ -28,23 +28,12 @@ const facebookUserObjectConstructor = profile => ({
 const verify = async (req, res) => {
   const { email } = req.user;
   try {
-    User.update(email, verified, true);
+    User.update(email, 'verified', true);
     // redirect user to the verification success page
   } catch (err) {
     console.log(err);
   }
 };
-
-// const sendVerificationEmail = (user) => {
-//   const payload = { id: user._id, email: user.email };
-//   const tempAccessToken = generateToken(payload, process.env.JWT_TEMP_DURATION);
-//   try {
-//     sendVerificationEmail(user.email, tempAccessToken);
-//     console.log(tempAccessToken);
-//   } catch (err) {
-//     return Promise.reject(err);
-//   }
-// };
 
 const createEmailUser = async (req, res) => {
   const { email, password } = req.body;
@@ -77,4 +66,5 @@ const createOrUpdateFacebookUser = async (req, res) => {
 module.exports = {
   createEmailUser,
   createOrUpdateFacebookUser,
+  verify,
 };
