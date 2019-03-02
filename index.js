@@ -6,10 +6,17 @@ const morgan = require('morgan');
 const compression = require('compression');
 const passport = require('passport');
 const config = require('config');
+const graphqlHTTP = require('express-graphql');
 const router = require('./router');
 
 const app = express();
 
+const schema = require('./schema');
+
+app.use('/graphql', graphqlHTTP({
+  schema,
+  name: 'vissarion'
+}));
 app.use(require('body-parser').urlencoded({ extended: true }));
 app.use(morgan('common'));
 app.use(compression());

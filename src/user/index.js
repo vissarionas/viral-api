@@ -35,6 +35,15 @@ const verify = async (req, res) => {
   }
 };
 
+const getUserInfoById = async (res, id) => {
+  try {
+    const user = await User.getById(id);
+    res.status(200).send({ username: user.username, email: user.email, verified: user.verified });
+  } catch (err) {
+    res.status(err.status).send(err.message);
+  }
+};
+
 const createEmailUser = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -43,6 +52,9 @@ const createEmailUser = async (req, res) => {
   } catch (err) {
     // user does not exist. Create user!
     const user = await User.save(userObjectConstructor(email, password));
+    const payload = { id: user._id, email: user.email, facebookid: user.facebookId };
+    const accessToken = generateToken(payload, process.env.JWT_DURATION);
+    res.send(accessToken);
     sendVerificationEmail(user);
   }
 };
@@ -64,6 +76,7 @@ const createOrUpdateFacebookUser = async (req, res) => {
 };
 
 module.exports = {
+  getUserInfoById,
   createEmailUser,
   createOrUpdateFacebookUser,
   verify,

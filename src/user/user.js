@@ -10,7 +10,7 @@ const User = {};
 
 User.getById = async (id) => {
   try {
-    await this.collection.findOne({ _id: id });
+    return await this.collection.findOne({ _id: id });
   } catch (err) {
     return Promise.reject(err);
   }
