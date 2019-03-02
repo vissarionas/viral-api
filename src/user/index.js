@@ -28,7 +28,7 @@ const facebookUserObjectConstructor = profile => ({
 const verify = async (req, res) => {
   const { email } = req.user;
   try {
-    User.update(email, 'verified', true);
+    await User.update(email, 'verified', true);
     // redirect user to the verification success page
   } catch (err) {
     console.log(err);
