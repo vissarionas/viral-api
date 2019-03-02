@@ -3,11 +3,10 @@ require('./src/passport-strategies');
 const express = require('express');
 const passport = require('passport');
 const login = require('./src/login');
-const users = require('./src/users');
 const posts = require('./src/posts');
 const rootRouter = express.Router();
 const externalAuthRouter = express.Router();
-const user = require('./src/user');
+const user = require('./src/user/');
 
 rootRouter.use(function timeLog(req, res, next) {
   console.log('Middleware example. Time: ', Date.now());
@@ -21,8 +20,8 @@ rootRouter.get('/', (req, res, next) => {
   }, 5000);
 }, (req, res) => res.send('ROOT'));
 
-rootRouter.post('/user', passport.authenticate('jwt', { session: false }), (req, res) => {
-  users.getUserById(req, res, req.query.user);
+rootRouter.get('/user', passport.authenticate('jwt', { session: false }), (req, res) => {
+  user.getUserInfoById(res, req.query.userId);
 });
 
 rootRouter.get('/posts', passport.authenticate('jwt', { session: false }), (req, res) => {
