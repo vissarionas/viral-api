@@ -15,10 +15,11 @@ const User = {};
  */
 User.get = async (params) => {
   try {
-    const user = await this.collection.findOne(params);
+    const usersCursor = await this.collection.find(params);
+    const users = await usersCursor.toArray();
     // eslint-disable-next-line no-throw-literal
-    if (!user) throw { status: 404, message: 'no user results' };
-    return user;
+    if (!users.length) throw { status: 404, message: 'no user results' };
+    return users;
   } catch (err) {
     return Promise.reject(err);
   }

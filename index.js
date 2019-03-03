@@ -15,7 +15,6 @@ const schema = require('./schema');
 
 app.use('/graphql', graphqlHTTP({
   schema,
-  name: 'vissarion',
   graphiql: true
 }));
 app.use(require('body-parser').urlencoded({ extended: true }));
