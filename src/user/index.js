@@ -38,7 +38,7 @@ const verify = async (req, res) => {
   }
 };
 
-const getUserInfo = async (req, res) => {
+const getUsers = async (req, res) => {
   const query = {};
   USER_SEARCH_FIELDS.forEach((field) => {
     let value = req.headers[field];
@@ -50,7 +50,7 @@ const getUserInfo = async (req, res) => {
     res.status(200).send(user);
   } catch (err) {
     res.status(err.status).send(err.message);
-    // return Promise.reject(err);
+    return Promise.reject(err);
   }
 };
 
@@ -86,7 +86,7 @@ const createOrUpdateFacebookUser = async (req, res) => {
 };
 
 module.exports = {
-  getUserInfo,
+  getUsers,
   createEmailUser,
   createOrUpdateFacebookUser,
   verify,
