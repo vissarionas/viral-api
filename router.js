@@ -21,7 +21,7 @@ rootRouter.get('/', (req, res, next) => {
 }, (req, res) => res.send('ROOT'));
 
 rootRouter.get('/user', passport.authenticate('jwt', { session: false }), (req, res) => {
-  user.getUserInfoById(res, req.query.userId);
+  user.getUserInfo(req, res);
 });
 
 rootRouter.get('/posts', passport.authenticate('jwt', { session: false }), (req, res) => {

@@ -35,9 +35,10 @@ const verify = async (req, res) => {
   }
 };
 
-const getUserInfoById = async (res, id) => {
+const getUserInfo = async (req, res) => {
+  const { id, email } = req.headers;
   try {
-    const user = await User.getById(id);
+    const user = await User.get({ _id: id, email });
     res.status(200).send({ username: user.username, email: user.email, verified: user.verified });
   } catch (err) {
     res.status(err.status).send(err.message);
@@ -76,7 +77,7 @@ const createOrUpdateFacebookUser = async (req, res) => {
 };
 
 module.exports = {
-  getUserInfoById,
+  getUserInfo,
   createEmailUser,
   createOrUpdateFacebookUser,
   verify,

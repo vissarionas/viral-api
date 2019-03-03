@@ -8,6 +8,22 @@ const User = {};
   this.collection = await getCollection(config.get('collections.users'));
 })();
 
+/**
+ * Return user objects
+ * @param {Object} params
+ * @return {Array} users
+ */
+User.get = async (params) => {
+  try {
+    const user = await this.collection.findOne(params);
+    // eslint-disable-next-line no-throw-literal
+    if (!user) throw { status: 401, message: 'no user results' };
+    return user;
+  } catch (err) {
+    return Promise.reject(err);
+  }
+};
+
 User.getById = async (id) => {
   try {
     return await this.collection.findOne({ _id: id });

@@ -32,10 +32,19 @@ module.exports = new GraphQLSchema({
         args: {
           id: {
             type: GraphQLString
+          },
+          email: {
+            type: GraphQLString
           }
         },
-        resolve: async (global, args) => {
-          const response = await fetch(`http://127.0.0.1:3000/user?userId=${args.id}&access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjNvYXpyaTg3ZnZqc3I3OHBqbyIsImVtYWlsIjoia2F0ZXJpbmEyQGdtYWlsLmNvbSIsImZhY2Vib29raWQiOiIiLCJpYXQiOjE1NTE1MTM3NzksImV4cCI6MTU1NDEwNTc3OX0.wp2GtNQWXfIUORq0twwbNkEkz7YECw74Bg5ZFmpaxmc`);
+        resolve: async (global, args, req) => {
+          const headers = {};
+          Object.keys(args).forEach((key) => {
+            if (args[key]) headers[key] = args[key];
+          });
+
+          const accessToken = req.headers.access_token;
+          const response = await fetch(`http://127.0.0.1:3000/user?access_token=${accessToken}`, { headers });
           const json = await response.json();
           return json;
         },
