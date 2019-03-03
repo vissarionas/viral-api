@@ -15,6 +15,10 @@ const userType = new GraphQLObjectType({
       type: GraphQLString,
       resolve: user => user.username
     },
+    email: {
+      type: GraphQLString,
+      resolve: user => user.email
+    },
     verified: {
       type: GraphQLBoolean,
       resolve: user => user.verified
@@ -30,23 +34,26 @@ module.exports = new GraphQLSchema({
       user: {
         type: userType,
         args: {
-          id: {
+          _id: {
             type: GraphQLString
           },
           email: {
             type: GraphQLString
+          },
+          verified: {
+            type: GraphQLBoolean
           }
         },
-        resolve: async (global, args, req) => {
-          const headers = {};
-          Object.keys(args).forEach((key) => {
-            if (args[key]) headers[key] = args[key];
-          });
-
-          const accessToken = req.headers.access_token;
-          const response = await fetch(`http://127.0.0.1:3000/user?access_token=${accessToken}`, { headers });
-          const json = await response.json();
-          return json;
+        resolve: async (global, args, context, info) => {
+          try {
+            const accessToken = context.headers.access_token;
+            const response = await fetch(`http://127.0.0.1:3000/user?access_token=${accessToken}`, { headers: args });
+            if (response.status !== 200) return null;
+            const json = await response.json();
+            return json;
+          } catch (err) {
+            return Promise.reject(err);
+          }
         },
       }
     }

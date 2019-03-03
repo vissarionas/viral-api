@@ -17,7 +17,7 @@ User.get = async (params) => {
   try {
     const user = await this.collection.findOne(params);
     // eslint-disable-next-line no-throw-literal
-    if (!user) throw { status: 401, message: 'no user results' };
+    if (!user) throw { status: 404, message: 'no user results' };
     return user;
   } catch (err) {
     return Promise.reject(err);

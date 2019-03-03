@@ -2,8 +2,11 @@
 const bcrypt = require('bcryptjs');
 const uniqid = require('uniqid');
 const User = require('./user');
+const Utils = require('../shared/utils');
 const { sendVerificationEmail } = require('../shared/mailer');
 const { generateToken } = require('../shared/token');
+
+const USER_SEARCH_FIELDS = ['_id', 'email', 'verified'];
 
 const userObjectConstructor = (email, password) => ({
   _id: uniqid(),
@@ -36,12 +39,18 @@ const verify = async (req, res) => {
 };
 
 const getUserInfo = async (req, res) => {
-  const { id, email } = req.headers;
+  const query = {};
+  USER_SEARCH_FIELDS.forEach((field) => {
+    let value = req.headers[field];
+    if (field === 'verified') value = Utils.stringToBoolean(value);
+    if (value !== undefined) query[field] = value;
+  });
   try {
-    const user = await User.get({ _id: id, email });
-    res.status(200).send({ username: user.username, email: user.email, verified: user.verified });
+    const user = await User.get(query);
+    res.status(200).send(user);
   } catch (err) {
     res.status(err.status).send(err.message);
+    // return Promise.reject(err);
   }
 };
 
