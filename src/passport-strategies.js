@@ -16,8 +16,8 @@ passport.use(new LocalStrategy(
 
 passport.use(new JwtStrategy({
   jwtFromRequest: ExtractJwt.fromExtractors([
-    ExtractJwt.fromHeader('access-token'),
-    ExtractJwt.fromUrlQueryParameter('access-token')
+    ExtractJwt.fromHeader('access_token'),
+    ExtractJwt.fromUrlQueryParameter('access_token')
   ]),
   secretOrKey: process.env.JWT_SECRET
 }, (jwtPayload, done) => done(null, jwtPayload)));
