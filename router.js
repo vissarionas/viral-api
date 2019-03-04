@@ -6,7 +6,8 @@ const login = require('./src/login');
 const posts = require('./src/posts');
 const rootRouter = express.Router();
 const externalAuthRouter = express.Router();
-const user = require('./src/user/');
+const user = require('./src/user');
+const post = require('./src/post');
 
 rootRouter.use(function timeLog(req, res, next) {
   console.log('Middleware example. Time: ', Date.now());
@@ -22,6 +23,10 @@ rootRouter.get('/', (req, res, next) => {
 
 rootRouter.get('/user', passport.authenticate('jwt', { session: false }), (req, res) => {
   user.getUsers(req, res);
+});
+
+rootRouter.get('/post', passport.authenticate('jwt', { session: false }), (req, res) => {
+  post.getPosts(req, res);
 });
 
 rootRouter.get('/posts', passport.authenticate('jwt', { session: false }), (req, res) => {
