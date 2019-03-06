@@ -1,5 +1,3 @@
-const fetch = require('node-fetch');
-
 const {
   GraphQLSchema,
   GraphQLObjectType,
@@ -7,6 +5,11 @@ const {
   GraphQLBoolean,
   GraphQLList
 } = require('graphql');
+
+const {
+  usersResolver,
+  postsResolver
+} = require('./resolvers');
 
 const PostType = new GraphQLObjectType({
   name: 'Post',
@@ -52,16 +55,12 @@ const UserType = new GraphQLObjectType({
         }
       },
       resolve: async (global, args, context, info) => {
+        const accessToken = context.headers.access_token;
+        const params = { user: global._id };
         try {
-          const accessToken = context.headers.access_token;
-          const user = global._id;
-          const response = await fetch(`http://127.0.0.1:3000/post?access_token=${accessToken}`, { headers: { user } });
-          if (response.status !== 200) {
-            throw (new Error(response.statusText));
-          }
-          return await response.json();
+          return await postsResolver(params, accessToken);
         } catch (err) {
-          return Promise.reject(err);
+          console.log(err);
         }
       },
     }
@@ -85,15 +84,11 @@ const QueryType = new GraphQLObjectType({
         }
       },
       resolve: async (global, args, context, info) => {
+        const accessToken = context.headers.access_token;
         try {
-          const accessToken = context.headers.access_token;
-          const response = await fetch(`http://127.0.0.1:3000/user?access_token=${accessToken}`, { headers: args });
-          if (response.status !== 200) {
-            throw (new Error(response.statusText));
-          }
-          return await response.json();
+          return await usersResolver(args, accessToken);
         } catch (err) {
-          return Promise.reject(err);
+          console.log(err);
         }
       },
     },
@@ -108,15 +103,11 @@ const QueryType = new GraphQLObjectType({
         }
       },
       resolve: async (global, args, context, info) => {
+        const accessToken = context.headers.access_token;
         try {
-          const accessToken = context.headers.access_token;
-          const response = await fetch(`http://127.0.0.1:3000/post?access_token=${accessToken}`, { headers: args });
-          if (response.status !== 200) {
-            throw (new Error(response.statusText));
-          }
-          return await response.json();
+          return await postsResolver(args, accessToken);
         } catch (err) {
-          return Promise.reject(err);
+          console.log(err);
         }
       },
     }

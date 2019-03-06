@@ -11,7 +11,7 @@ const router = require('./router');
 
 const app = express();
 
-const schema = require('./schema');
+const schema = require('./src/graphQL/schema');
 
 app.use('/graphql', graphqlHTTP({
   schema,
