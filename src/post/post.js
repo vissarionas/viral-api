@@ -7,14 +7,11 @@ const Post = {};
   this.collection = await getCollection(config.get('collections.posts'));
 })();
 
-Post.get = async (params) => {
-  try {
-    const postsCursor = await this.collection.find(params);
-    // iterate instead of transforming to array
-    return await postsCursor.toArray();
-  } catch (err) {
-    return Promise.reject(err);
-  }
-};
+/**
+ * Return post docs
+ * @param {Object} params
+ * @return {Array} post docs
+ */
+Post.get = params => this.collection.find(params).toArray();
 
 module.exports = Post;

@@ -52,13 +52,9 @@ const UserType = new GraphQLObjectType({
           type: GraphQLString
         }
       },
-      resolve: async (global, args, context, info) => {
+      resolve: (global, args, context, info) => {
         const params = { user: global._id };
-        try {
-          return Post.get(params);
-        } catch (err) {
-          console.log(err);
-        }
+        return Post.get(params);
       },
     }
   },
@@ -80,13 +76,7 @@ const QueryType = new GraphQLObjectType({
           type: GraphQLBoolean
         }
       },
-      resolve: async (global, args, context, info) => {
-        try {
-          return User.get(args);
-        } catch (err) {
-          return 'not existing user';
-        }
-      },
+      resolve: (global, args, context, info) => User.get(args)
     },
     posts: {
       type: new GraphQLList(PostType),
@@ -98,13 +88,7 @@ const QueryType = new GraphQLObjectType({
           type: GraphQLString
         }
       },
-      resolve: async (global, args, context, info) => {
-        try {
-          return Post.get(args);
-        } catch (err) {
-          console.log(err);
-        }
-      },
+      resolve: (global, args, context, info) => Post.get(args)
     }
   }
 });

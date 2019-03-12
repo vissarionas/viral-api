@@ -9,19 +9,11 @@ const User = {};
 })();
 
 /**
- * Return user objects
+ * Return user docs
  * @param {Object} params
- * @return {Array} users
+ * @return {Array} user docs
  */
-User.get = async (params) => {
-  try {
-    const usersCursor = await this.collection.find(params);
-    // iterate instead of transforming to array
-    return await usersCursor.toArray();
-  } catch (err) {
-    return Promise.reject(err);
-  }
-};
+User.get = params => this.collection.find(params).toArray();
 
 User.getById = async (id) => {
   try {

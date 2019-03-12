@@ -57,7 +57,7 @@ const getUsers = async (req, res) => {
 const createEmailUser = async (req, res) => {
   const { email, password } = req.body;
   try {
-    await User.getByEmail(email);
+    await User.get(email);
     res.status(409).send({ message: 'user exists' });
   } catch (err) {
     // user does not exist. Create user!
