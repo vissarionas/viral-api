@@ -6,10 +6,8 @@ const {
   GraphQLList
 } = require('graphql');
 
-const {
-  usersResolver,
-  postsResolver
-} = require('./resolvers');
+const User = require('../user/user');
+const Post = require('../post/post');
 
 const PostType = new GraphQLObjectType({
   name: 'Post',
@@ -55,10 +53,9 @@ const UserType = new GraphQLObjectType({
         }
       },
       resolve: async (global, args, context, info) => {
-        const accessToken = context.headers.access_token;
         const params = { user: global._id };
         try {
-          return await postsResolver(params, accessToken);
+          return Post.get(params);
         } catch (err) {
           console.log(err);
         }
@@ -84,11 +81,10 @@ const QueryType = new GraphQLObjectType({
         }
       },
       resolve: async (global, args, context, info) => {
-        const accessToken = context.headers.access_token;
         try {
-          return await usersResolver(args, accessToken);
+          return User.get(args);
         } catch (err) {
-          console.log(err);
+          return 'not existing user';
         }
       },
     },
@@ -103,9 +99,8 @@ const QueryType = new GraphQLObjectType({
         }
       },
       resolve: async (global, args, context, info) => {
-        const accessToken = context.headers.access_token;
         try {
-          return await postsResolver(args, accessToken);
+          return Post.get(args);
         } catch (err) {
           console.log(err);
         }
