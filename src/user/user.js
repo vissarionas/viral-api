@@ -17,10 +17,7 @@ User.get = async (params) => {
   try {
     const usersCursor = await this.collection.find(params);
     // iterate instead of transforming to array
-    const users = await usersCursor.toArray();
-    // eslint-disable-next-line no-throw-literal
-    if (!users.length) throw { status: 404, message: 'no users found' };
-    return users;
+    return await usersCursor.toArray();
   } catch (err) {
     return Promise.reject(err);
   }

@@ -2,10 +2,12 @@ require('./src/passport-strategies');
 
 const express = require('express');
 const passport = require('passport');
+const graphqlHTTP = require('express-graphql');
 const login = require('./src/login');
 const posts = require('./src/posts');
 const rootRouter = express.Router();
 const externalAuthRouter = express.Router();
+const schema = require('./src/graphQL/schema');
 const user = require('./src/user');
 const post = require('./src/post');
 
@@ -20,6 +22,11 @@ rootRouter.get('/', (req, res, next) => {
     next();
   }, 5000);
 }, (req, res) => res.send('ROOT'));
+
+rootRouter.get('/graphql', passport.authenticate('jwt', { session: false }),
+  graphqlHTTP({
+    schema,
+  }));
 
 rootRouter.get('/user', passport.authenticate('jwt', { session: false }), (req, res) => {
   user.getUsers(req, res);

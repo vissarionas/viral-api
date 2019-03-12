@@ -3,21 +3,16 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
+const bodyParser = require('body-parser');
 const compression = require('compression');
 const passport = require('passport');
 const config = require('config');
-const graphqlHTTP = require('express-graphql');
 const router = require('./router');
 
 const app = express();
 
-const schema = require('./src/graphQL/schema');
-
-app.use('/graphql', graphqlHTTP({
-  schema,
-  graphiql: true
-}));
-app.use(require('body-parser').urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ type: 'application/json' }));
 app.use(morgan('common'));
 app.use(compression());
 app.use(cors({
