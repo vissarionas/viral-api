@@ -10,7 +10,7 @@ const externalAuthRouter = express.Router();
 const schema = require('./src/graphQL/schema');
 const user = require('./src/user');
 
-rootRouter.get('/graphql', passport.authenticate('jwt', { session: false }),
+rootRouter.post('/graphql', passport.authenticate('jwt', { session: false }),
   graphqlHTTP({
     schema,
   }));
