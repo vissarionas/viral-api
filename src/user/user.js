@@ -9,11 +9,12 @@ const User = {};
 })();
 
 /**
- * Return promise that resolve to array
  * @param {Object} params
  * @return {Promise}
  */
-User.get = params => this.collection.find(params).toArray();
+User.get = params => this.collection.findOne(params);
+
+User.create = params => this.collection.insertOne(params);
 
 User.getByFacebookId = async (facebookId) => {
   try {
