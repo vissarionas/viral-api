@@ -1,17 +1,19 @@
 const config = require('config').mongo;
-const getCollection = require('../shared/collectionClient');
+const dbClient = require('../shared/dbClient');
 
 const Post = {};
 
 (async () => {
-  this.collection = await getCollection(config.get('collections.posts'));
+  this.collection = await dbClient(config.get('collections.posts'));
 })();
 
 /**
- * Return post docs
+ * Return promise that resolves to array
  * @param {Object} params
- * @return {Array} post docs
+ * @return {Promise}
  */
 Post.get = params => this.collection.find(params).toArray();
+
+Post.create = params => this.collection.insertOne(params);
 
 module.exports = Post;
