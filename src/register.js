@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const uniqid = require('uniqid');
-const users = require('./users');
+const users = require('../src/user');
 const mailer = require('./shared/mailer');
 
 const signAndSendToken = (req, res, externalUser) => {
