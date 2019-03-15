@@ -26,6 +26,14 @@ const PostType = new GraphQLObjectType({
       type: GraphQLInt,
       resolve: post => post.likes
     },
+    longitude: {
+      type: GraphQLFloat,
+      resolve: post => post.point.longitude
+    },
+    latitude: {
+      type: GraphQLFloat,
+      resolve: post => post.point.latitude
+    },
   }
 });
 
@@ -55,7 +63,7 @@ const UserType = new GraphQLObjectType({
           type: GraphQLString
         }
       },
-      resolve: async (global, args, context, info) => Post.get({ user: global._id })
+      resolve: async (parent, args, context) => Post.get({ user: parent._id })
     }
   },
 });
@@ -66,29 +74,19 @@ const QueryType = new GraphQLObjectType({
     user: {
       type: UserType,
       args: {
-        _id: {
-          type: GraphQLString
-        },
-        email: {
-          type: GraphQLString
-        }
+        _id: { type: GraphQLString },
+        email: { type: GraphQLString },
       },
-      resolve: async (global, args, context, info) => User.get(args)
+      resolve: async (parent, args, context) => User.get(args)
     },
     posts: {
       type: new GraphQLList(PostType),
       args: {
-        user: {
-          type: GraphQLString
-        },
-        longitude: {
-          type: GraphQLFloat
-        },
-        latitude: {
-          type: GraphQLFloat
-        }
+        user: { type: GraphQLString },
+        longitude: { type: GraphQLFloat },
+        latitude: { type: GraphQLFloat }
       },
-      resolve: async (global, args, context, info) => Post.get(args)
+      resolve: async (parent, args, context) => Post.get(args)
     }
   }
 });
