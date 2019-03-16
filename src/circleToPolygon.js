@@ -18,15 +18,17 @@ function offset(c1, distance, bearing) {
     Math.sin(bearing) * Math.sin(dByR) * Math.cos(lat1),
     Math.cos(dByR) - Math.sin(lat1) * Math.sin(lat)
   );
-  return [toDegrees(lon), toDegrees(lat)];
+  const longitude = toDegrees(lon);
+  const latitude = toDegrees(lat);
+  return [longitude, latitude];
 }
 
 module.exports = function circleToPolygon(center, radius, numberOfSegments) {
-  const n = numberOfSegments || 32;
+  const segments = numberOfSegments || 32;
   const flatCoordinates = [];
   const coordinates = [];
-  for (let i = 0; i < n; i += 1) {
-    flatCoordinates.push.apply(flatCoordinates, offset(center, radius, 2 * Math.PI * i / n));
+  for (let i = 0; i < segments; i += 1) {
+    flatCoordinates.push.apply(flatCoordinates, offset(center, radius, 2 * Math.PI * i / segments));
   }
   flatCoordinates.push(flatCoordinates[0], flatCoordinates[1]);
 
