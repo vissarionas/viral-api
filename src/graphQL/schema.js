@@ -63,7 +63,7 @@ const UserType = new GraphQLObjectType({
           type: GraphQLString
         }
       },
-      resolve: async (parent, args, context) => Post.get({ user: parent._id })
+      resolve: async parent => Post.getByUser({ user: parent._id })
     }
   },
 });
@@ -77,16 +77,15 @@ const QueryType = new GraphQLObjectType({
         _id: { type: GraphQLString },
         email: { type: GraphQLString },
       },
-      resolve: async (parent, args, context) => User.get(args)
+      resolve: async (parent, args) => User.get(args)
     },
-    posts: {
+    intersectedPosts: {
       type: new GraphQLList(PostType),
       args: {
-        user: { type: GraphQLString },
         longitude: { type: GraphQLFloat },
         latitude: { type: GraphQLFloat }
       },
-      resolve: async (parent, args, context) => Post.get(args)
+      resolve: async (parent, args) => Post.getInterected(args)
     }
   }
 });

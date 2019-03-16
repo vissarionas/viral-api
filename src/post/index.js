@@ -1,21 +1,5 @@
 /* eslint-disable consistent-return */
-const Post = require('../post/post');
 const coordinates = require('../coordinates');
-
-// GRAPHQL REFACTOR
-const getIntersectedPosts = (req, res) => {
-  const { longitude, latitude } = req.body;
-  Post.get({
-    geo: {
-      $geoIntersects: {
-        $geometry: {
-          type: 'Point',
-          coordinates: [parseFloat(longitude), parseFloat(latitude)]
-        }
-      }
-    }
-  });
-};
 
 // GRAPHQL REFACTOR
 const createPostObject = (user, content, longitude, latitude) => {
@@ -78,7 +62,6 @@ const likePost = (req) => {
 };
 
 module.exports = {
-  getIntersectedPosts,
   savePost,
   likePost
 };
