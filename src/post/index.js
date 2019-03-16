@@ -1,10 +1,11 @@
 /* eslint-disable consistent-return */
+const Post = require('./post');
 const coordinates = require('../coordinates');
 
 // GRAPHQL REFACTOR
-const createPostObject = (user, content, longitude, latitude) => {
+const constructPostObject = (user, content, longitude, latitude) => {
   const coordinateBox = coordinates.createCoordinatesBox(longitude, latitude, 0.02);
-  const postObject = {
+  return {
     user,
     content,
     point: { longitude, latitude },
@@ -15,20 +16,12 @@ const createPostObject = (user, content, longitude, latitude) => {
       ]
     }
   };
-  return postObject;
 };
 
 // GRAPHQL REFACTOR
-const savePost = (req, res) => {
-  const db = client.db(dbName);
-  const user = req.user.userId;
-  const body = req.body.content;
-  const { longitude } = req.body.longitude;
-  const { latitude } = req.body.latitude;
-  const postObject = createPostObject(user, body, parseFloat(longitude), parseFloat(latitude));
-  db.collection(config.get('collections.posts')).insertOne(postObject)
-    .then(result => res.send(result),
-      err => res.send(err));
+const savePost = async (user, body, longitude, latitude) => {
+  const postObject = constructPostObject(user, body, parseFloat(longitude), parseFloat(latitude));
+  await Post.create(postObject);
 };
 
 // GRAPHQL REFACTOR
