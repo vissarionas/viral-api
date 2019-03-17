@@ -26,7 +26,7 @@ client.connect(() => {
     const user = users[Math.round(Math.random())];
     const content = `Some dummy content ${Math.round(Math.random() * 1000)}`;
     const longitude = Math.random() * 180;
-    const latitude = Math.round(Math.random()) ? Math.random() * 90 : (Math.random() * 90) * -1;
+    const latitude = Math.round(Math.random()) ? Math.random() * 85 : (Math.random() * 85) * -1;
     const coordinates = [longitude, latitude];
     const polygon = circleToPolygon(coordinates, radius, numberOfEdges);
     return {
@@ -39,7 +39,7 @@ client.connect(() => {
     };
   };
 
-  let postsCounter = 2;
+  let postsCounter = 3000;
   while (postsCounter) {
     posts.push(createRandomPost());
     postsCounter -= 1;
