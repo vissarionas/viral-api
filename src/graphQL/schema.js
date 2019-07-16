@@ -3,7 +3,9 @@ const {
   GraphQLObjectType,
   GraphQLString,
   GraphQLBoolean,
-  GraphQLList
+  GraphQLList,
+  GraphQLFloat,
+  GraphQLInt,
 } = require('graphql');
 
 const User = require('../user/user');
@@ -19,6 +21,18 @@ const PostType = new GraphQLObjectType({
     content: {
       type: GraphQLString,
       resolve: post => post.content
+    },
+    likes: {
+      type: GraphQLInt,
+      resolve: post => post.likes
+    },
+    longitude: {
+      type: GraphQLFloat,
+      resolve: post => post.point.longitude
+    },
+    latitude: {
+      type: GraphQLFloat,
+      resolve: post => post.point.latitude
     },
   }
 });
@@ -47,12 +61,9 @@ const UserType = new GraphQLObjectType({
       args: {
         user: {
           type: GraphQLString
-        },
-        content: {
-          type: GraphQLString
         }
       },
-      resolve: async (global, args, context, info) => Post.get({ user: global._id })
+      resolve: async parent => Post.getByUser({ user: parent._id })
     }
   },
 });
@@ -60,32 +71,21 @@ const UserType = new GraphQLObjectType({
 const QueryType = new GraphQLObjectType({
   name: 'Query',
   fields: {
-    users: {
-      type: new GraphQLList(UserType),
+    user: {
+      type: UserType,
       args: {
-        _id: {
-          type: GraphQLString
-        },
-        email: {
-          type: GraphQLString
-        },
-        verified: {
-          type: GraphQLBoolean
-        }
+        _id: { type: GraphQLString },
+        email: { type: GraphQLString },
       },
-      resolve: async (global, args, context, info) => User.get(args)
+      resolve: async (parent, args) => User.get(args)
     },
-    posts: {
+    intersectedPosts: {
       type: new GraphQLList(PostType),
       args: {
-        user: {
-          type: GraphQLString
-        },
-        content: {
-          type: GraphQLString
-        }
+        longitude: { type: GraphQLFloat },
+        latitude: { type: GraphQLFloat }
       },
-      resolve: async (global, args, context, info) => Post.get(args)
+      resolve: async (parent, args) => Post.getInterected(args)
     }
   }
 });
