@@ -12,22 +12,32 @@ const CONNECTION_OPTIONS = {
 
 class DbAdapter {
   constructor(collectionName) {
+    this.client = new MongoClient(process.env.DB_URL, CONNECTION_OPTIONS);
     this.collectionName = collectionName;
   }
 
-  async connectClient() {
-    try {
-      const mongoClient = await MongoClient.connect(process.env.DB_URL, CONNECTION_OPTIONS);
-      console.log(`DB collection '${this.collectionName}' connected`);
-      this.collection = mongoClient.db(config.database).collection(this.collectionName);
-    } catch (err) {
-      console.log(err);
-    }
+  connect() {
+    this.client.connect(async () => {
+      this.collection = this.client.db(config.database).collection(this.collectionName);
+      console.log(`${this.collectionName} client connected.`);
+    });
   }
 
-  get(params) {
-    this.collection.findOne(params);
+  create(document) {
+    return this.collection.insertOne(document);
+  }
+
+  get(filter) {
+    return this.collection.findOne(filter);
+  }
+
+  update(docIdentifier, key, value) {
+    return this.collection.updateOne({ docIdentifier }, { $set: { [key]: value } });
+  }
+
+  delete(filter) {
+    return this.collection.findOneAndDelete(filter);
   }
 }
 
-export default DbAdapter;
+module.exports = DbAdapter;

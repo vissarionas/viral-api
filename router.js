@@ -15,6 +15,14 @@ rootRouter.post('/graphql', passport.authenticate('jwt', { session: false }),
     schema,
   }));
 
+rootRouter.post('/register', (req, res) => {
+  user.createEmailUser(req, res);
+});
+
+rootRouter.post('/delete', passport.authenticate('jwt', { session: false }), (req, res) => {
+  user.deleteUser(req, res);
+});
+
 rootRouter.post('/savePost', passport.authenticate('jwt', { session: false }), (req, res) => {
   posts.savePost(req, res);
 });
@@ -25,10 +33,6 @@ rootRouter.post('/like', passport.authenticate('jwt', { session: false }), (req,
 
 rootRouter.post('/login', passport.authenticate('local', { session: false }), (req, res) => {
   login.logIn(req, res);
-});
-
-rootRouter.post('/register', (req, res) => {
-  user.createEmailUser(req, res);
 });
 
 rootRouter.get('/verify', passport.authenticate('jwt', { session: false }), (req, res) => {

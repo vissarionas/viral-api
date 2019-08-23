@@ -35,25 +35,35 @@ const verify = async (req, res) => {
   }
 };
 
+const deleteUser = async (req, res) => {
+  const { email } = req.body;
+  try {
+    await User.delete({ email });
+    res.status(200).send({ message: 'user deleted' });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const createEmailUser = async (req, res) => {
   const { email, password } = req.body;
-  try {
-    await User.get(email);
+  const user = await User.get({ email });
+  if (user) {
     res.status(409).send({ message: 'user exists' });
-  } catch (err) {
+  } else {
     // user does not exist. Create user!
-    const user = await User.save(userObjectConstructor(email, password));
-    const payload = { id: user._id, email: user.email, facebookid: user.facebookId };
+    const newUser = await User.create(userObjectConstructor(email, password));
+    const payload = { id: newUser._id, email: newUser.email, facebookid: newUser.facebookId };
     const accessToken = generateToken(payload, process.env.JWT_DURATION);
     res.send(accessToken);
-    sendVerificationEmail(user);
+    // sendVerificationEmail(newUser);
   }
 };
 
 const createOrUpdateFacebookUser = async (req, res) => {
   const profile = req.user;
   try {
-    const user = await User.getByFacebookId(profile.id);
+    const user = await User.get({ facebookId: profile.id });
     const payload = { id: user._id, email: user.email, facebookid: user.facebookId };
     const accessToken = generateToken(payload, process.env.JWT_DURATION);
     res.send(accessToken);
@@ -70,4 +80,5 @@ module.exports = {
   createEmailUser,
   createOrUpdateFacebookUser,
   verify,
+  deleteUser,
 };

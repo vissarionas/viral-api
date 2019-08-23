@@ -1,48 +1,29 @@
-/* eslint-disable consistent-return */
-const config = require('config').mongo;
-const dbClient = require('../shared/dbClient');
+const DbAdapter = require('../shared/dbAdapter');
 
-const User = {};
+const dbAdapter = new DbAdapter('users');
+dbAdapter.connect();
 
-(async () => {
-  this.collection = await dbClient(config.get('collections.users'));
-})();
-
-/**
- * @param {Object} params
- * @return {Promise}
- */
-User.get = params => this.collection.findOne(params);
-
-User.create = params => this.collection.insertOne(params);
-
-User.getByFacebookId = async (facebookId) => {
-  try {
-    const user = await this.collection.findOne({ facebookId });
-    if (!user) throw new Error('user does not exist');
-    return user;
-  } catch (err) {
-    return Promise.reject(err);
+class User {
+  static async create(userDocument) {
+    await dbAdapter.create(userDocument);
+    return userDocument;
   }
-};
 
-User.save = async (userObject) => {
-  try {
-    await this.collection.insertOne(userObject);
-    return userObject;
-  } catch (err) {
-    return Promise.reject(err);
+  static get(filter) {
+    return dbAdapter.get(filter);
   }
-};
 
-User.update = async (docIdentifier, property, value) => {
-  try {
-    this.collection.updateOne({ docIdentifier }, { $set: { [property]: value } });
-  } catch (err) {
-    return Promise.reject(err);
+  static update(docIdentifier, key, value) {
+    return dbAdapter.update({ docIdentifier }, { $set: { [key]: value } });
   }
-};
 
-User.isFacebookUser = userObject => userObject.facebookId;
+  static delete(filter) {
+    return dbAdapter.delete(filter);
+  }
+
+  static isFacebookUser(userObject) {
+    return userObject.facebookId;
+  }
+}
 
 module.exports = User;
