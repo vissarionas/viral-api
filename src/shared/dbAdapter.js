@@ -31,8 +31,8 @@ class DbAdapter {
     return this.collection.findOne(filter);
   }
 
-  update(docIdentifier, key, value) {
-    return this.collection.updateOne({ docIdentifier }, { $set: { [key]: value } });
+  update(filter, key, value) {
+    return this.collection.updateOne(filter, { $set: { [key]: value } });
   }
 
   delete(filter) {

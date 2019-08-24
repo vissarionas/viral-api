@@ -36,7 +36,7 @@ rootRouter.post('/login', passport.authenticate('local', { session: false }), (r
 });
 
 rootRouter.get('/verify', passport.authenticate('jwt', { session: false }), (req, res) => {
-  user.verify(req, res);
+  user.updateUserAsVerified(req, res);
 });
 
 externalAuthRouter.post('/facebook', passport.authenticate('facebook-token', { session: false }), (req, res) => {

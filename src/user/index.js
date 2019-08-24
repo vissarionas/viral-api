@@ -24,14 +24,14 @@ const createFacebookUserDocument = profile => ({
   verified: true
 });
 
-// eslint-disable-next-line no-unused-vars
-const verify = async (req, res) => {
+const updateUserAsVerified = async (req, res) => {
   const { email } = req.user;
   try {
     await User.update(email, 'verified', true);
+    res.status(200).send({ message: 'user verified' });
     // redirect user to the verification success page
-  } catch (err) {
-    console.log(err);
+  } catch ({ message }) {
+    res.status(304).send({ message });
   }
 };
 
@@ -40,8 +40,8 @@ const deleteUser = async (req, res) => {
   try {
     await User.delete({ email });
     res.status(200).send({ message: 'user deleted' });
-  } catch (err) {
-    res.status(404).send({ message: err.message });
+  } catch ({ message }) {
+    res.status(404).send({ message });
   }
 };
 
@@ -77,6 +77,6 @@ const registerFacebookUser = async (req, res) => {
 module.exports = {
   registerEmailUser,
   registerFacebookUser,
-  verify,
+  updateUserAsVerified,
   deleteUser,
 };
