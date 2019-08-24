@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const compression = require('compression');
 const passport = require('passport');
 const config = require('config');
-const { rootRouter, externalAuthRouter } = require('./router');
+const { rootRouter, usersRouter, externalAuthRouter } = require('./router');
 
 const app = express();
 
@@ -22,6 +22,7 @@ app.use(cors({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use('/', rootRouter);
+app.use('/users', usersRouter);
 app.use('/auth', externalAuthRouter);
 
 app.listen(config.get('server.port'), () => console.log('Server started on http://127.0.0.1:3000'));

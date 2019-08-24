@@ -14,7 +14,7 @@
     "verification": {
       "sender": "viral@app.com",
       "subject": "Email verification :)",
-      "endpoint": "http://127.0.0.1:3000/verify?access-token="
+      "endpoint": "http://127.0.0.1:3000/users/verify?access_token="
     }
   }
 }

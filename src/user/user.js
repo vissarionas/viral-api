@@ -20,13 +20,13 @@ class User {
     const filter = { email };
     const updateResult = await usersDb.update(filter, key, value);
     if (updateResult.modifiedCount) return updateResult;
-    throw (new Error('nothing was updated'));
+    throw (new Error('nothing to update'));
   }
 
   static async delete(filter) {
     const result = await usersDb.delete(filter);
     if (result.value) return result;
-    throw (new Error('nothing was deleted'));
+    throw (new Error('nothing to delete'));
   }
 }
 
