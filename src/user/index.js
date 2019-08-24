@@ -1,11 +1,10 @@
-/* eslint-disable consistent-return */
 const bcrypt = require('bcryptjs');
 const uniqid = require('uniqid');
 const User = require('./user');
 const { sendVerificationEmail } = require('../shared/mailer');
 const { generateToken } = require('../shared/token');
 
-const userObjectConstructor = (email, password) => ({
+const createUserDocument = (email, password) => ({
   _id: uniqid(),
   username: email.split('@')[0],
   email,
@@ -15,7 +14,7 @@ const userObjectConstructor = (email, password) => ({
   verified: false
 });
 
-const facebookUserObjectConstructor = profile => ({
+const createFacebookUserDocument = profile => ({
   _id: uniqid(),
   username: profile.name.givenName + profile.name.familyName,
   email: profile.emails[0].value,
@@ -25,6 +24,7 @@ const facebookUserObjectConstructor = profile => ({
   verified: true
 });
 
+// eslint-disable-next-line no-unused-vars
 const verify = async (req, res) => {
   const { email } = req.user;
   try {
@@ -41,26 +41,25 @@ const deleteUser = async (req, res) => {
     await User.delete({ email });
     res.status(200).send({ message: 'user deleted' });
   } catch (err) {
-    console.log(err);
+    res.status(404).send({ message: err.message });
   }
 };
 
-const createEmailUser = async (req, res) => {
+const registerEmailUser = async (req, res) => {
   const { email, password } = req.body;
-  const user = await User.get({ email });
-  if (user) {
+  try {
+    await User.get({ email });
     res.status(409).send({ message: 'user exists' });
-  } else {
-    // user does not exist. Create user!
-    const newUser = await User.create(userObjectConstructor(email, password));
+  } catch (err) {
+    const newUser = await User.create(createUserDocument(email, password));
     const payload = { id: newUser._id, email: newUser.email, facebookid: newUser.facebookId };
     const accessToken = generateToken(payload, process.env.JWT_DURATION);
-    res.send(accessToken);
-    // sendVerificationEmail(newUser);
+    res.status(201).send({ accessToken });
+    sendVerificationEmail(newUser);
   }
 };
 
-const createOrUpdateFacebookUser = async (req, res) => {
+const registerFacebookUser = async (req, res) => {
   const profile = req.user;
   try {
     const user = await User.get({ facebookId: profile.id });
@@ -68,17 +67,16 @@ const createOrUpdateFacebookUser = async (req, res) => {
     const accessToken = generateToken(payload, process.env.JWT_DURATION);
     res.send(accessToken);
   } catch (err) {
-    // user does not exist. Create user!
-    const user = await User.save(facebookUserObjectConstructor(profile));
-    const payload = { id: user._id, email: user.email, facebookid: user.facebookId };
+    const newUser = await User.create(createFacebookUserDocument(profile));
+    const payload = { id: newUser._id, email: newUser.email, facebookid: newUser.facebookId };
     const accessToken = generateToken(payload, process.env.JWT_DURATION);
     res.send(accessToken);
   }
 };
 
 module.exports = {
-  createEmailUser,
-  createOrUpdateFacebookUser,
+  registerEmailUser,
+  registerFacebookUser,
   verify,
   deleteUser,
 };

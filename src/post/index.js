@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable consistent-return */
 const Post = require('./post');
 const coordinates = require('../coordinates');

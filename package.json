@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "test": "mocha --recursive",
+    "lint": "eslint --ext .js src/",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0"
   },
   "pre-commit": [

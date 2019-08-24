@@ -16,7 +16,7 @@ rootRouter.post('/graphql', passport.authenticate('jwt', { session: false }),
   }));
 
 rootRouter.post('/register', (req, res) => {
-  user.createEmailUser(req, res);
+  user.registerEmailUser(req, res);
 });
 
 rootRouter.post('/delete', passport.authenticate('jwt', { session: false }), (req, res) => {
@@ -40,7 +40,7 @@ rootRouter.get('/verify', passport.authenticate('jwt', { session: false }), (req
 });
 
 externalAuthRouter.post('/facebook', passport.authenticate('facebook-token', { session: false }), (req, res) => {
-  user.createOrUpdateFacebookUser(req, res);
+  user.registerFacebookUser(req, res);
 });
 
 module.exports = {
