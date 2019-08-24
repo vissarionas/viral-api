@@ -74,9 +74,19 @@ const registerFacebookUser = async (req, res) => {
   }
 };
 
+const logUserIn = (req, res) => {
+  const payload = { id: req.user._id, email: req.user.email };
+  const accessToken = generateToken(payload, process.env.JWT_DURATION);
+  res.status(200).send({ accessToken });
+  if (!req.user.verified) {
+    // Send verification email
+  }
+};
+
 module.exports = {
   registerEmailUser,
   registerFacebookUser,
   updateUserAsVerified,
   deleteUser,
+  logUserIn,
 };
