@@ -8,7 +8,7 @@ const {
   GraphQLInt,
 } = require('graphql');
 
-const users = require('../users');
+const Users = require('../users');
 const Post = require('../post/post');
 
 const PostType = new GraphQLObjectType({
@@ -78,7 +78,7 @@ const QueryType = new GraphQLObjectType({
         email: { type: GraphQLString },
       },
       // eslint-disable-next-line no-return-await
-      resolve: async (parent, args) => (await users.getUser(args)),
+      resolve: async (parent, args) => (await Users.get(args)),
     },
   }
 });
