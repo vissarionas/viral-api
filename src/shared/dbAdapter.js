@@ -23,20 +23,29 @@ class DbAdapter {
     });
   }
 
-  create(document) {
-    return this.collection.insertOne(document);
+  async create(document) {
+    const result = await this.collection.insertOne(document);
+    if (result.insertedCount) return result.ops[0];
+    throw (new Error('nothing was created'));
   }
 
-  get(filter) {
-    return this.collection.findOne(filter);
+  async get(filter) {
+    const user = await this.collection.findOne(filter);
+    if (user) return user;
+    throw (new Error('user not found'));
   }
 
-  update(filter, key, value) {
-    return this.collection.updateOne(filter, { $set: { [key]: value } });
+  async update(filter, key, value) {
+    const queryFilter = { filter };
+    const updateResult = await this.collection.updateOne(queryFilter, key, value);
+    if (updateResult.modifiedCount) return updateResult;
+    throw (new Error('nothing to update'));
   }
 
-  delete(filter) {
-    return this.collection.findOneAndDelete(filter);
+  async delete(filter) {
+    const result = await this.collection.findOneAndDelete(filter);
+    if (result.value) return result;
+    throw (new Error('nothing to delete'));
   }
 }
 
