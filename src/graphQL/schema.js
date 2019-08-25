@@ -77,16 +77,12 @@ const QueryType = new GraphQLObjectType({
         _id: { type: GraphQLString },
         email: { type: GraphQLString },
       },
-      resolve: async (parent, args) => User.get(args)
+      // eslint-disable-next-line arrow-body-style
+      resolve: async (parent, args) => {
+        // eslint-disable-next-line no-return-await
+        return await User.get(args);
+      }
     },
-    intersectedPosts: {
-      type: new GraphQLList(PostType),
-      args: {
-        longitude: { type: GraphQLFloat },
-        latitude: { type: GraphQLFloat }
-      },
-      resolve: async (parent, args) => Post.getInterected(args)
-    }
   }
 });
 

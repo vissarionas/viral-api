@@ -7,8 +7,9 @@ const bodyParser = require('body-parser');
 const compression = require('compression');
 const passport = require('passport');
 const config = require('config');
-const rootRouter = require('./routers/root');
+const postsRouter = require('./routers/posts');
 const usersRouter = require('./routers/users');
+const graphqlRouter = require('./routers/graphql');
 
 const app = express();
 
@@ -22,7 +23,8 @@ app.use(cors({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use('/', rootRouter);
 app.use('/users', usersRouter);
+app.use('/posts', postsRouter);
+app.use('/graphql', graphqlRouter);
 
 app.listen(config.get('server.port'), () => console.log('Server started on http://127.0.0.1:3000'));
