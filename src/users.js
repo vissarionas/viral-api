@@ -5,7 +5,6 @@ const { generateToken } = require('./shared/token');
 const DbAdapter = require('./shared/dbAdapter');
 
 const usersDB = new DbAdapter('users');
-usersDB.connect();
 
 const createUserDocument = (email, password) => ({
   _id: uniqid(),

@@ -9,17 +9,12 @@ const CONNECTION_OPTIONS = {
     password: process.env.DB_PASSWORD
   }
 };
+const client = new MongoClient(process.env.DB_URL, CONNECTION_OPTIONS);
 
 class DbAdapter {
   constructor(collectionName) {
-    this.client = new MongoClient(process.env.DB_URL, CONNECTION_OPTIONS);
-    this.collectionName = collectionName;
-  }
-
-  connect() {
-    this.client.connect(async () => {
-      this.collection = this.client.db(config.database).collection(this.collectionName);
-      console.log(`${this.collectionName} client connected.`);
+    client.connect(() => {
+      this.collection = client.db(config.database).collection(collectionName);
     });
   }
 
