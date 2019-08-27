@@ -4,8 +4,8 @@ const { sendVerificationEmail } = require('./shared/mailer');
 const { generateToken } = require('./shared/token');
 const DbAdapter = require('./shared/dbAdapter');
 
-const DB = new DbAdapter('users');
-DB.connect();
+const usersDB = new DbAdapter('users');
+usersDB.connect();
 
 const createUserDocument = (email, password) => ({
   _id: uniqid(),
@@ -30,7 +30,7 @@ const createFacebookUserDocument = profile => ({
 class Users {
   static async get(filter) {
     try {
-      return await DB.get(filter);
+      return await usersDB.get(filter);
     } catch (err) {
       return err;
     }
@@ -39,7 +39,7 @@ class Users {
   static async updateUserAsVerified(req, res) {
     const { email } = req.user;
     try {
-      await DB.update(email, 'verified', true);
+      await usersDB.update(email, 'verified', true);
       res.status(200).send({ message: 'user verified' });
       // redirect user to the verification success page
     } catch ({ message }) {
@@ -50,7 +50,7 @@ class Users {
   static async delete(req, res) {
     const { email } = req.body;
     try {
-      await DB.delete({ email });
+      await usersDB.delete({ email });
       res.status(200).send({ message: 'user deleted' });
     } catch ({ message }) {
       res.status(404).send({ message });
@@ -60,10 +60,10 @@ class Users {
   static async registerEmailUser(req, res) {
     const { email, password } = req.body;
     try {
-      await DB.get({ email });
+      await usersDB.get({ email });
       res.status(409).send({ message: 'user exists' });
     } catch (err) {
-      const newUser = await DB.create(createUserDocument(email, password));
+      const newUser = await usersDB.create(createUserDocument(email, password));
       const payload = { id: newUser._id, email: newUser.email, facebookid: newUser.facebookId };
       const accessToken = generateToken(payload, process.env.JWT_DURATION);
       res.status(201).send({ accessToken });
@@ -74,12 +74,12 @@ class Users {
   static async registerFacebookUser(req, res) {
     const profile = req.user;
     try {
-      const user = await DB.get({ facebookId: profile.id });
+      const user = await usersDB.get({ facebookId: profile.id });
       const payload = { id: user._id, email: user.email, facebookid: user.facebookId };
       const accessToken = generateToken(payload, process.env.JWT_DURATION);
       res.send(accessToken);
     } catch (err) {
-      const newUser = await DB.create(createFacebookUserDocument(profile));
+      const newUser = await usersDB.create(createFacebookUserDocument(profile));
       const payload = { id: newUser._id, email: newUser.email, facebookid: newUser.facebookId };
       const accessToken = generateToken(payload, process.env.JWT_DURATION);
       res.send(accessToken);
