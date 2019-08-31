@@ -32,25 +32,13 @@ class Users {
     return await UsersDb.get(filter);
   }
 
-  static async updateUserAsVerified(req, res) {
-    const { email } = req.user;
-    try {
-      await UsersDb.update(email, 'verified', true);
-      res.status(200).send({ message: 'verified' });
-      // redirect user to the verification success page
-    } catch ({ message }) {
-      res.status(304).send({ message });
-    }
+  static async update(filter, update) {
+    // eslint-disable-next-line no-return-await
+    return await UsersDb.update(filter, update);
   }
 
-  static async delete(req, res) {
-    const { email } = req.body;
-    try {
-      await UsersDb.delete({ email });
-      res.status(200).send({ message: 'deleted' });
-    } catch ({ message }) {
-      res.status(404).send({ message });
-    }
+  static async delete(filter) {
+    return UsersDb.delete(filter);
   }
 
   static async registerEmailUser(req, res) {
@@ -80,15 +68,6 @@ class Users {
       const accessToken = generateToken(payload, process.env.JWT_DURATION);
       res.status(201).send({ accessToken });
     }
-  }
-
-  static logIn(req, res) {
-    if (!req.user.verified) {
-      // Send verification email
-    }
-    const payload = { id: req.user._id, email: req.user.email };
-    const accessToken = generateToken(payload, process.env.JWT_DURATION);
-    res.status(200).send({ accessToken });
   }
 }
 

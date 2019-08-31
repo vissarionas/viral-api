@@ -40,11 +40,10 @@ class DbAdapter {
     throw (new Error(result.insertedCount));
   }
 
-  async update(filter, key, value) {
-    const queryFilter = { filter };
-    const updateResult = await this.collection.updateOne(queryFilter, key, value);
+  async update(filter, update) {
+    const updateResult = await this.collection.updateOne(filter, { $set: update });
     if (updateResult.modifiedCount) return updateResult;
-    throw (new Error(updateResult.modifiedCount));
+    throw Error;
   }
 
   async delete(filter) {

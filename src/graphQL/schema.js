@@ -9,7 +9,7 @@ const {
 } = require('graphql');
 
 const Users = require('../users');
-const Post = require('../post/post');
+const Posts = require('../posts');
 
 const PostType = new GraphQLObjectType({
   name: 'Post',
@@ -63,7 +63,7 @@ const UserType = new GraphQLObjectType({
           type: GraphQLString
         }
       },
-      resolve: async parent => Post.getByUser({ user: parent._id })
+      resolve: async parent => Posts.get({ user: parent._id })
     }
   },
 });
