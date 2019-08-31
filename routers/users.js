@@ -18,7 +18,7 @@ usersRouter.get('/verify', passport.authenticate('jwt', { session: false }), (re
   const { email } = req.user;
   Users.update({ email }, { verified: true })
     .then(() => res.status(200).send({ message: 'verified' }))
-    .catch(() => res.status(304));
+    .catch(() => res.status(304).send());
 });
 
 usersRouter.post('/login', passport.authenticate('local', { session: false }), (req, res) => {

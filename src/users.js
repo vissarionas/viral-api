@@ -28,13 +28,11 @@ const createFacebookUserDocument = profile => ({
 
 class Users {
   static async get(filter) {
-    // eslint-disable-next-line no-return-await
-    return await UsersDb.get(filter);
+    return UsersDb.get(filter);
   }
 
   static async update(filter, update) {
-    // eslint-disable-next-line no-return-await
-    return await UsersDb.update(filter, update);
+    return UsersDb.update(filter, update);
   }
 
   static async delete(filter) {
