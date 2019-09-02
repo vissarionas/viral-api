@@ -4,11 +4,11 @@ const LocalStrategy = require('passport-local').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 const { ExtractJwt } = require('passport-jwt');
 const bcrypt = require('bcryptjs');
-const Users = require('../src/users');
+const User = require('./user');
 
 passport.use(new LocalStrategy(
   (username, password, done) => {
-    Users.get({ email: username })
+    User.get({ email: username })
       .then(user => bcrypt.compare(password, user.password, () => done(null, user)),
         err => done(err));
   }
