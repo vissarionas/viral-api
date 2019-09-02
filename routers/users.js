@@ -30,44 +30,43 @@ const createFacebookUserDocument = profile => ({
 });
 
 
-usersRouter.post('/register', (req, res) => {
+usersRouter.post('/register', async (req, res) => {
   const { email, password } = req.body;
-  User.get({ email })
-    .then(user => res.status(409).send({ message: 'user exists', user }))
-    .catch(() => {
-      User.create(createUserDocument(email, password))
-        .then((newUser) => {
-          const payload = { id: newUser._id, email: newUser.email };
-          const accessToken = generateToken(payload, process.env.JWT_DURATION);
-          res.status(201).send({ accessToken });
-          sendVerificationEmail(newUser);
-        });
-    });
+  try {
+    const user = await User.get({ email });
+    res.status(200).send({ message: 'user already exists', user });
+  } catch (error) {
+    const newUser = await User.create(createUserDocument(email, password));
+    const payload = { id: newUser._id, email: newUser.email };
+    const accessToken = generateToken(payload, process.env.JWT_DURATION);
+    res.status(201).send({ accessToken });
+    sendVerificationEmail(newUser);
+  }
 });
 
-usersRouter.post('/auth/facebook', passport.authenticate('facebook-token', { session: false }), (req, res) => {
+usersRouter.post('/auth/facebook', passport.authenticate('facebook-token', { session: false }), async (req, res) => {
   const profile = req.user;
-  User.get({ facebookId: profile.id })
-    .then((user) => {
-      const payload = { id: user._id, email: user.email, facebookid: user.facebookId };
-      const accessToken = generateToken(payload, process.env.JWT_DURATION);
-      res.send({ accessToken });
-    })
-    .catch(() => {
-      User.create(createFacebookUserDocument(profile))
-        .then((newUser) => {
-          const payload = { id: newUser._id, email: newUser.email, facebookid: newUser.facebookId };
-          const accessToken = generateToken(payload, process.env.JWT_DURATION);
-          res.status(201).send({ accessToken });
-        });
-    });
+  try {
+    const user = await User.get({ facebookId: profile.id });
+    const payload = { id: user._id, email: user.email, facebookid: user.facebookId };
+    const accessToken = generateToken(payload, process.env.JWT_DURATION);
+    res.send({ accessToken });
+  } catch (error) {
+    const newUser = await User.create(createFacebookUserDocument(profile));
+    const payload = { id: newUser._id, email: newUser.email, facebookid: newUser.facebookId };
+    const accessToken = generateToken(payload, process.env.JWT_DURATION);
+    res.status(201).send({ accessToken });
+  }
 });
 
-usersRouter.get('/verify', passport.authenticate('jwt', { session: false }), (req, res) => {
+usersRouter.get('/verify', passport.authenticate('jwt', { session: false }), async (req, res) => {
   const { email } = req.user;
-  User.update({ email }, { verified: true })
-    .then(() => res.status(200).send({ message: 'verified' }))
-    .catch(() => res.status(304).send());
+  try {
+    await User.update({ email }, { verified: true });
+    res.status(200).send({ message: 'verified' });
+  } catch (error) {
+    res.status(304).send();
+  }
 });
 
 usersRouter.post('/login', passport.authenticate('local', { session: false }), (req, res) => {
@@ -79,11 +78,14 @@ usersRouter.post('/login', passport.authenticate('local', { session: false }), (
   res.status(200).send({ accessToken });
 });
 
-usersRouter.post('/delete', passport.authenticate('jwt', { session: false }), (req, res) => {
+usersRouter.post('/delete', passport.authenticate('jwt', { session: false }), async (req, res) => {
   const { email } = req.body;
-  User.delete({ email })
-    .then(() => res.status(200).send({ message: 'deleted' }))
-    .catch(({ message }) => res.status(404).send({ message }));
+  try {
+    await User.delete({ email });
+    res.status(200).send({ message: 'deleted' });
+  } catch (error) {
+    res.status(404).send({ message: error.message });
+  }
 });
 
 module.exports = usersRouter;

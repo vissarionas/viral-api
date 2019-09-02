@@ -49,7 +49,7 @@ class DbAdapter {
   async delete(filter) {
     const result = await this.collection.findOneAndDelete(filter);
     if (result.value) return result;
-    throw (new Error('deletion error'));
+    throw (new Error('nothing was deleted'));
   }
 }
 
